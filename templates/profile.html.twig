@@ -7,6 +7,48 @@
     <p>Email : {{ email }}</p>
     <p>Rôle : {{ role }}</p>
 
+    {% if isAdmin or isGuildMaster %}
+        <h3>Administration</h3>
+        <p>Vous avez accès aux fonctions d'administration.</p>
+        <a href="/admin" class="btn btn-warning">Panneau d'administration</a>
+    {% endif %}
+
+    {% if isGuildMaster %}
+        <h3>Gestion de la Guilde</h3>
+        <p>Vous êtes le Maître de Guilde. Vous avez tous les droits.</p>
+    {% endif %}
+
+    {% if isOfficer %}
+        <h3>Zone Officier</h3>
+        <p>Vous avez accès aux informations des officiers.</p>
+        <a href="/officer" class="btn btn-info">Accéder à la zone Officier</a>
+    {% endif %}
+
+    {% if isVeteran %}
+        <h3>Section des Vétérans</h3>
+        <p>Accès aux informations spécifiques aux anciens membres.</p>
+    {% endif %}
+
+    {% if isMember %}
+        <h3>Section des Membres</h3>
+        <p>Bienvenue parmi les membres de la guilde.</p>
+    {% endif %}
+
+    {% if isRecruit %}
+        <h3>Section des Recrues</h3>
+        <p>Bienvenue dans la guilde !</p>
+    {% endif %}
+
+    {% if isVisitor %}
+        <h3>Section des Visiteurs</h3>
+        <p>Vous avez un accès limité en tant que visiteur.</p>
+    {% endif %}
+
+    {% if isApplicant %}
+        <h3>Section des Postulants</h3>
+        <p>Votre candidature est en cours de traitement.</p>
+    {% endif %}
+
     <h3>Modifier vos informations</h3>
     <form action="/profile/update" method="post">
         <div class="mb-3">
