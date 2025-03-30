@@ -13,6 +13,28 @@ class Router {
                 $controller = new HomeController();
                 $controller->index();
                 break;
+
+            case '/login':
+                $authController = new \App\Controllers\AuthController();
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $authController->login();
+                } else {
+                    $authController->loginForm();
+                }
+                break;
+
+            case '/logout':
+                $authController = new \App\Controllers\AuthController();
+                $authController->logout();
+                break;
+            case '/profile':
+                $profileController = new \App\Controllers\ProfileController();
+                $profileController->index();
+                break;
+            case '/profile/update':
+                $profileController = new \App\Controllers\ProfileController();
+                $profileController->update();
+                break;
             default:
                 echo "404 - Page non trouvée";
                 break;

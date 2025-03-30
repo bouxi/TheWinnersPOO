@@ -7,6 +7,8 @@ use App\Views\View;
 class HomeController {
     public function index(): void {
         $view = new View();
-        $view->render('home.html.twig', ['title' => 'Accueil']);
+        // Vérifie si l'utilisateur est connecté
+        $username = $_SESSION['user'] ?? null;
+        $view->render('home.html.twig', ['username' => $username]);
     }
 }
