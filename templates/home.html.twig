@@ -3,8 +3,21 @@
 {% block content %}
     <h1>Bienvenue sur TheWinners</h1>
 
-    {% if username %}
-        <p>Connecté en tant que {{ username }}</p>
+    {% if session.user %}
+        <p>Connecté en tant que {{ session.user }} ({{ session.role }})</p>
+
+        {% if session.role == 'admin' or session.role == 'guild_master' %}
+            <a href="/admin" class="btn btn-warning">Accéder à l'Administration</a>
+        {% endif %}
+
+        {% if session.role == 'officer' or session.role == 'veteran' %}
+            <a href="/officer" class="btn btn-info">Zone Officier</a>
+        {% endif %}
+
+        {% if session.role == 'member' %}
+            <p>Bienvenue, membre fidèle !</p>
+        {% endif %}
+
         <a href="/profile" class="btn btn-success">Voir mon profil</a>
         <a href="/logout" class="btn btn-danger">Déconnexion</a>
     {% else %}

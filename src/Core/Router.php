@@ -31,7 +31,10 @@ class Router {
                 $profileController = new \App\Controllers\ProfileController();
                 $profileController->index();
                 break;
-
+            case '/profile/update':
+                $profileController = new \App\Controllers\ProfileController();
+                $profileController->update();
+                break;
             default:
                 echo "404 - Page non trouvée";
                 break;

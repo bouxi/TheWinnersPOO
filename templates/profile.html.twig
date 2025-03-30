@@ -4,7 +4,21 @@
 
 {% block content %}
     <h2>Profil de {{ username }}</h2>
-    <p>Bienvenue, {{ username }} !</p>
-    <p>Vous êtes actuellement connecté.</p>
-    <a href="/logout" class="btn btn-danger">Déconnexion</a>
+    <p>Email : {{ email }}</p>
+    <p>Rôle : {{ role }}</p>
+
+    <h3>Modifier vos informations</h3>
+    <form action="/profile/update" method="post">
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" name="email" id="email" value="{{ email }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Nouveau mot de passe</label>
+            <input type="password" class="form-control" name="password" id="password" placeholder="Laissez vide pour ne pas changer">
+        </div>
+        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+    </form>
+
+    <a href="/" class="btn btn-secondary mt-3">Retour à l'accueil</a>
 {% endblock %}

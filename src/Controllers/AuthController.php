@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\UserRepository;
+use App\Models\User;
 use App\Views\View;
 
 class AuthController {
@@ -20,14 +21,17 @@ class AuthController {
         $user = $userRepo->findByUsername($username);
 
         if ($user && $user->verifyPassword($password)) {
-            session_start();
+            //session_start();
             $_SESSION['user'] = $user->getUsername();
+            $_SESSION['role'] = $user->getRole();
+            // Redirection vers le profil
             header('Location: /profile');
             exit;
         } else {
             echo "Identifiants incorrects.";
         }
     }
+
 
     public function logout(): void {
         session_start();

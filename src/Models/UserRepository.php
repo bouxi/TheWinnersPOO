@@ -35,4 +35,14 @@ class UserRepository {
 
         return null;
     }
+
+    public function update(User $user): bool {
+        $stmt = $this->db->prepare("UPDATE users SET email = :email, password = :password WHERE username = :username");
+        return $stmt->execute([
+            'username' => $user->getUsername(),
+            'email' => $user->getEmail(),
+            'password' => $user->getPassword()
+        ]);
+    }
+
 }
