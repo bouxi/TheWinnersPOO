@@ -1,0 +1,10 @@
+# Cache et logs
+/var/
+/vendor/
+
+# Configurations sensibles
+.env
+
+# Fichiers temporaires
+*.log
+*.cache
