@@ -1,9 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil - TheWinners{% endblock %}
-
 {% block content %}
-    <h1>Bienvenue sur le site de la Guilde TheWinners</h1>
-    <p>Ce site est dédié à la gestion de notre guilde WoW.</p>
-    <a href="/login" class="btn btn-primary">Connexion</a>
+    <h1>Bienvenue sur TheWinners</h1>
+
+    {% if username %}
+        <p>Connecté en tant que {{ username }}</p>
+        <a href="/profile" class="btn btn-success">Voir mon profil</a>
+        <a href="/logout" class="btn btn-danger">Déconnexion</a>
+    {% else %}
+        <p>Vous n'êtes pas connecté.</p>
+        <a href="/login" class="btn btn-primary">Connexion</a>
+    {% endif %}
 {% endblock %}

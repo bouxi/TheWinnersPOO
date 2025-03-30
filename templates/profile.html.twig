@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil de {{ username }}{% endblock %}
+
+{% block content %}
+    <h2>Profil de {{ username }}</h2>
+    <p>Bienvenue, {{ username }} !</p>
+    <p>Vous êtes actuellement connecté.</p>
+    <a href="/logout" class="btn btn-danger">Déconnexion</a>
+{% endblock %}

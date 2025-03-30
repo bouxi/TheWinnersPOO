@@ -9,10 +9,11 @@ class User {
     private string $password;
     private string $role;
 
-    public function __construct(string $username, string $email, string $password, string $role = 'member') {
+    public function __construct(string $username, string $email, string $password, string $role = 'member', bool $hashed = false) {
         $this->username = $username;
         $this->email = $email;
-        $this->password = password_hash($password, PASSWORD_BCRYPT);
+        // Vérifier si le mot de passe est déjà haché
+        $this->password = $hashed ? $password : password_hash($password, PASSWORD_BCRYPT);
         $this->role = $role;
     }
 
