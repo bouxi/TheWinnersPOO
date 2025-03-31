@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord Admin{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2>Tableau de bord Administrateur</h2>
+        <p>Bienvenue sur le tableau de bord. Voici quelques statistiques de la guilde.</p>
+
+        <div class="card bg-dark text-white mb-3">
+            <div class="card-body">
+                <h3>Statistiques des utilisateurs</h3>
+                <p>Nombre total d'utilisateurs : <strong>{{ totalUsers }}</strong></p>
+
+                <h4>Répartition des rôles :</h4>
+                <ul>
+                    {% for role in rolesDistribution %}
+                        <li>{{ role.role|capitalize }} : {{ role.count }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a href="/admin/users" class="btn btn-primary">Gérer les utilisateurs</a>
+        </div>
+    </div>
+{% endblock %}
