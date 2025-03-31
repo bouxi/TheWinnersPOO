@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'utilisateur{% endblock %}
+
+{% block content %}
+    <h2>Modifier l'utilisateur</h2>
+
+    <form action="/admin/users/update/{{ id }}" method="post">
+        <div class="mb-3">
+            <label for="username" class="form-label">Nom d'utilisateur</label>
+            <input type="text" class="form-control" name="username" value="{{ username }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" name="email" value="{{ email }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Nouveau mot de passe (laisser vide pour ne pas changer)</label>
+            <input type="password" class="form-control" name="password">
+        </div>
+        <div class="mb-3">
+            <label for="role" class="form-label">Rôle</label>
+            <select class="form-select" name="role">
+                <option value="admin" {% if role == 'admin' %}selected{% endif %}>Admin</option>
+                <option value="guild_master" {% if role == 'guild_master' %}selected{% endif %}>Maître de Guilde</option>
+                <option value="officer" {% if role == 'officer' %}selected{% endif %}>Officier</option>
+                <option value="veteran" {% if role == 'veteran' %}selected{% endif %}>Vétéran</option>
+                <option value="member" {% if role == 'member' %}selected{% endif %}>Membre</option>
+                <option value="recruit" {% if role == 'recruit' %}selected{% endif %}>Recrue</option>
+                <option value="visitor" {% if role == 'visitor' %}selected{% endif %}>Visiteur</option>
+                <option value="applicant" {% if role == 'applicant' %}selected{% endif %}>Postulant</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+    </form>
+
+    <a href="/admin/users" class="btn btn-secondary mt-3">Retour</a>
+{% endblock %}

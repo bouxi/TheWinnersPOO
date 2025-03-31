@@ -2,97 +2,40 @@
 
 namespace App\Core;
 
-use App\Controllers\HomeController;
-
 class Router {
+    private array $routes = [];
+
+    // Ajouter une route avec la méthode HTTP
+    public function addRoute(string $method, string $path, callable $callback): void {
+        $this->routes[] = ['method' => $method, 'path' => $path, 'callback' => $callback];
+    }
+
+    // Récupérer toutes les routes (pour le debug)
+    public function getRoutes(): array {
+        return $this->routes;
+    }
+
+    // Gérer la requête et router vers le bon contrôleur
     public function handleRequest(): void {
         $path = $_SERVER['REQUEST_URI'] ?? '/';
+        $method = $_SERVER['REQUEST_METHOD'];
 
-        switch (true) {
-            case $path === '/':
-                $controller = new HomeController();
-                $controller->index();
-                break;
-
-            case $path === '/login':
-                $authController = new \App\Controllers\AuthController();
-                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    $authController->login();
-                } else {
-                    $authController->loginForm();
-                }
-                break;
-
-            case $path === '/logout':
-                $authController = new \App\Controllers\AuthController();
-                $authController->logout();
-                break;
-
-            case $path === '/profile':
-                $profileController = new \App\Controllers\ProfileController();
-                $profileController->index();
-                break;
-
-            case $path === '/profile/update':
-                $profileController = new \App\Controllers\ProfileController();
-                $profileController->update();
-                break;
-
-            case $path === '/admin':
-                Auth::requireRole(['admin', 'guild_master']);
-                $adminController = new \App\Controllers\AdminController();
-                $adminController->dashboard();
-                break;
-
-            case $path === '/officer':
-                Auth::requireRole(['officer', 'guild_master']);
-                $officerController = new \App\Controllers\OfficerController();
-                $officerController->dashboard();
-                break;
-
-            case $path === '/veteran':
-                $veteranController = new \App\Controllers\VeteranController();
-                $veteranController->dashboard();
-                break;
-
-            case $path === '/member':
-                $memberController = new \App\Controllers\MemberController();
-                $memberController->dashboard();
-                break;
-
-            case $path === '/recruit':
-                $recruitController = new \App\Controllers\RecruitController();
-                $recruitController->dashboard();
-                break;
-
-            case $path === '/applicant':
-                $applicantController = new \App\Controllers\ApplicantController();
-                $applicantController->dashboard();
-                break;
-
-            case $path === '/admin/users':
-                $adminUserController = new \App\Controllers\AdminUserController();
-                $adminUserController->index();
-                break;
-
-            case $path === '/admin/users/create':
-                $adminUserController = new \App\Controllers\AdminUserController();
-                $adminUserController->create();
-                break;
-
-            case $path === '/admin/users/store':
-                $adminUserController = new \App\Controllers\AdminUserController();
-                $adminUserController->store();
-                break;
-
-            case preg_match('/\/admin\/users\/delete\/(\d+)/', $path, $matches):
-                $adminUserController = new \App\Controllers\AdminUserController();
-                $adminUserController->delete((int)$matches[1]);
-                break;
-
-            default:
-                echo "404 - Page non trouvée";
-                break;
+        foreach ($this->routes as $route) {
+            // Vérifier la méthode et le chemin
+            if ($method === $route['method'] && preg_match($this->convertPathToRegex($route['path']), $path, $matches)) {
+                array_shift($matches); // Retirer le premier élément (chemin complet)
+                call_user_func_array($route['callback'], $matches);
+                return;
+            }
         }
+
+        // Si aucune route ne correspond
+        http_response_code(404);
+        echo "404 - Page non trouvée";
+    }
+
+    // Convertir le chemin en expression régulière pour prendre en charge les paramètres dynamiques
+    private function convertPathToRegex(string $path): string {
+        return '#^' . preg_replace('#\{([a-zA-Z0-9_]+)\}#', '([^/]+)', $path) . '$#';
     }
 }

@@ -24,10 +24,25 @@
                 <td>{{ user.email }}</td>
                 <td>{{ user.role }}</td>
                 <td>
-                    <a href="/admin/users/delete/{{ user.id }}" class="btn btn-danger">Supprimer</a>
+                    <a href="/admin/users/edit/{{ user.id }}" class="btn btn-warning">Modifier</a>
+                    <form action="/admin/users/delete/{{ user.id }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">Supprimer</button>
+                    </form>
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+
+    <script>
+        // Vérification avant la suppression
+        document.querySelectorAll('.btn-danger').forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (!confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+
 {% endblock %}
