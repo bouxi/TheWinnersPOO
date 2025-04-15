@@ -12,10 +12,16 @@ class HomeController {
         }
 
         // Vérifier si l'utilisateur est connecté
-        $username = isset($_SESSION['user']) ? $_SESSION['user'] : 'Invité';
+        //$username = $_SESSION['user'] ?? 'Invité';
+
+        $isAuthenticated = isset($_SESSION['user']);
+        $username = $isAuthenticated ? $_SESSION['user']['username'] : null;
 
         // Obtenir l'instance Twig et rendre la page d'accueil
         $twig = Twig::getInstance();
-        echo $twig->render('home.html.twig', ['username' => $username]);
+        echo $twig->render('home.html.twig', [
+            'isAuthenticated' => $isAuthenticated,
+            'username' => $username
+        ]);
     }
 }

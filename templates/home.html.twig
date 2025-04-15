@@ -3,42 +3,45 @@
 {% block title %}Accueil{% endblock %}
 
 {% block content %}
-    <div class="container text-center mt-5">
-        <h2>Bienvenue sur TheWinners</h2>
 
-        {% if username %}
-            <p>Bienvenue, <strong>{{ username }}</strong> !</p>
-            <a href="/profile" class="btn btn-primary">Mon profil</a>
-            <a href="/logout" class="btn btn-danger">Déconnexion</a>
-        {% else %}
-            <p>Vous n'êtes pas connecté.</p>
-            <a href="/login" class="btn btn-success">Connexion</a>
-        {% endif %}
-    </div>
+    <div class="main">
+        <div class="section">
+            <div class="container text-center mt-5">
+                <h2>Bienvenue sur TheWinners</h2>
 
-    <div class="container mt-4">
-        <h3>À propos de la guilde</h3>
-        <p>
-            Bienvenue sur le site officiel de la guilde <strong>TheWinners</strong>. Ici, vous trouverez toutes les informations sur la guilde, les dernières actualités,
-            les événements à venir et bien plus encore !
-        </p>
-    </div>
+                {% if isAuthenticated %}
+                    <p>Bienvenue, <strong>{{ username }}</strong> !</p>
+                {% else %}
 
-    <div class="container mt-4">
-        <h3>Nos valeurs</h3>
-        <ul>
-            <li>Esprit d'équipe</li>
-            <li>Respect et entraide</li>
-            <li>Passion du jeu</li>
-            <li>Engagement communautaire</li>
-        </ul>
-    </div>
+                {% endif %}
 
-    <div class="container mt-4">
-        <h3>Rejoignez-nous !</h3>
-        <p>Envie de faire partie de l'aventure ? Rejoignez-nous et participez aux activités de la guilde !</p>
-        {% if not username %}
-            <a href="/login" class="btn btn-success">Se connecter</a>
-        {% endif %}
+            </div>
+
+            <div class="container mt-4">
+                <h3>À propos de la guilde</h3>
+                <p>
+                    Bienvenue sur le site officiel de la guilde <strong>TheWinners</strong>. Ici, vous trouverez toutes les informations sur la guilde, les dernières actualités,
+                    les événements à venir et bien plus encore !
+                </p>
+            </div>
+
+            <div class="container mt-4">
+                <h3>Nos valeurs</h3>
+                <ul>
+                    <li>Esprit d'équipe</li>
+                    <li>Respect et entraide</li>
+                    <li>Passion du jeu</li>
+                    <li>Engagement communautaire</li>
+                </ul>
+            </div>
+
+            <div class="container mt-4">
+                <h3>Rejoignez-nous !</h3>
+                <p>Envie de faire partie de l'aventure ? Rejoignez-nous et participez aux activités de la guilde !</p>
+                {% if not username %}
+                    <a href="/login" class="btn btn-success">Se connecter</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
 {% endblock %}

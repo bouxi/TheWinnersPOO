@@ -10,9 +10,8 @@ class ProfileController {
 
     public function index(): void {
         Auth::requireAuth();
-        $username = $_SESSION['user'];
 
-        // Récupérer les informations complètes de l'utilisateur
+        $username = $_SESSION['user']['username']; // ✅ extraction du string
         $userRepo = new UserRepository();
         $user = $userRepo->findByUsername($username);
 
@@ -33,9 +32,11 @@ class ProfileController {
     }
 
 
+
     public function update(): void {
         Auth::requireAuth();
-        $username = $_SESSION['user'];
+
+        $username = $_SESSION['user']['username']; // ✅ extraction correcte
 
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
