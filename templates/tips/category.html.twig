@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ category|capitalize }}{% endblock %}
+
+{% block content %}
+    <h2>Astuces pour {{ category|capitalize }}</h2>
+    <ul>
+        {% for tip in tips %}
+            <li><a href="/tips/{{ category }}/{{ tip.id }}">{{ tip.title }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

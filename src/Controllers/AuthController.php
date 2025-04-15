@@ -23,8 +23,13 @@ class AuthController {
 
         if ($user && $user->verifyPassword($password)) {
             //session_start();
-            $_SESSION['user'] = $user->getUsername();
-            $_SESSION['role'] = $user->getRole();
+            // Stocker un tableau avec les infos nécessaires
+            $_SESSION['user'] = [
+                'id' => $user->getId(),
+                'username' => $user->getUsername(),
+                'role' => $user->getRole()
+                ];
+
             // Redirection vers le profil
             header('Location: /profile');
             exit;
@@ -50,8 +55,8 @@ class AuthController {
         // Démarrer le tampon de sortie pour éviter les erreurs d'en-tête
         ob_start();
 
-        $username = trim($_POST['username']);
-        $email = trim($_POST['email']);
+        $username = htmlspecialchars(trim($_POST['username']), ENT_QUOTES, 'UTF-8');
+        $email = htmlspecialchars(trim($_POST['email']), ENT_QUOTES, 'UTF-8');
         $password = $_POST['password'];
         $passwordConfirm = $_POST['password_confirm'];
 
