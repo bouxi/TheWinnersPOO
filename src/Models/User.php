@@ -19,13 +19,13 @@ class User {
     public const ROLE_VISITOR = 'visitor';       // Visiteur
     public const ROLE_APPLICANT = 'applicant';   // Postulant
 
-    public function __construct(string $username, string $email, string $password, string $role = self::ROLE_VISITOR, bool $hashed = false) {
+    public function __construct(string $username, string $email, string $password, string $role = self::ROLE_VISITOR, bool $hashed = false, int $id = 0) {
+        $this->id = $id;
         $this->username = $username;
         $this->email = $email;
         $this->password = $hashed ? $password : password_hash($password, PASSWORD_BCRYPT);
         $this->role = $role;
     }
-
     // Getters
     public function getId(): int {
         return $this->id;

@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Astuce{% endblock %}
+
+{% block content %}
+    <h2>{{ tip.title }}</h2>
+    <p>{{ tip.content }}</p>
+
+    <h3>Commentaires</h3>
+    <ul>
+        {% for comment in comments %}
+            <li>{{ comment.author }} : {{ comment.content }}</li>
+        {% endfor %}
+    </ul>
+
+    <form action="/tips/{{ category }}/{{ tip.id }}/comment" method="POST">
+        <textarea name="comment" placeholder="Ajouter un commentaire" required></textarea>
+        <button type="submit">Poster</button>
+    </form>
+{% endblock %}

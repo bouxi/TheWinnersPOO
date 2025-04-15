@@ -10,9 +10,8 @@ class ProfileController {
 
     public function index(): void {
         Auth::requireAuth();
-        $username = $_SESSION['user'];
 
-        // Récupérer les informations complètes de l'utilisateur
+        $username = $_SESSION['user']['username']; // ✅ extraction du string
         $userRepo = new UserRepository();
         $user = $userRepo->findByUsername($username);
 
@@ -20,13 +19,24 @@ class ProfileController {
         $view->render('profile.html.twig', [
             'username' => $user->getUsername(),
             'email' => $user->getEmail(),
-            'role' => $user->getRole()
+            'role' => $user->getRole(),
+            'isAdmin' => $user->isAdmin(),
+            'isGuildMaster' => $user->isGuildMaster(),
+            'isOfficer' => $user->isOfficer(),
+            'isVeteran' => $user->isVeteran(),
+            'isMember' => $user->isMember(),
+            'isRecruit' => $user->isRecruit(),
+            'isVisitor' => $user->isVisitor(),
+            'isApplicant' => $user->isApplicant()
         ]);
     }
 
+
+
     public function update(): void {
         Auth::requireAuth();
-        $username = $_SESSION['user'];
+
+        $username = $_SESSION['user']['username']; // ✅ extraction correcte
 
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
