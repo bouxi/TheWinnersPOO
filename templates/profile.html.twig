@@ -1,66 +1,57 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Profil de {{ username }}{% endblock %}
+{% block title %}Mon profil - TheWinners{% endblock %}
 
 {% block content %}
-    <h2>Profil de {{ username }}</h2>
-    <p>Email : {{ email }}</p>
-    <p>Rôle : {{ role }}</p>
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <h2 class="text-center mb-4">Profil de {{ username }}</h2>
 
-    {% if isAdmin or isGuildMaster %}
-        <h3>Administration</h3>
-        <p>Vous avez accès aux fonctions d'administration.</p>
-        <a href="/admin" class="btn btn-warning">Panneau d'administration</a>
-    {% endif %}
+            {% if success %}
+                <div class="alert alert-success text-center">
+                    {{ success }}
+                </div>
+            {% endif %}
 
-    {% if isGuildMaster %}
-        <h3>Gestion de la Guilde</h3>
-        <p>Vous êtes le Maître de Guilde. Vous avez tous les droits.</p>
-    {% endif %}
+            {% if error %}
+                <div class="alert alert-danger text-center">
+                    {{ error }}
+                </div>
+            {% endif %}
 
-    {% if isOfficer %}
-        <h3>Zone Officier</h3>
-        <p>Vous avez accès aux informations des officiers.</p>
-        <a href="/officer" class="btn btn-info">Accéder à la zone Officier</a>
-    {% endif %}
+            <form method="post" action="/profile/update" class="bg-secondary p-4 rounded shadow">
+                <div class="mb-3">
+                    <label class="form-label">Nom d'utilisateur</label>
+                    <input type="text" class="form-control" value="{{ username }}" disabled>
+                </div>
 
-    {% if isVeteran %}
-        <h3>Section des Vétérans</h3>
-        <p>Accès aux informations spécifiques aux anciens membres.</p>
-    {% endif %}
+                <div class="mb-3">
+                    <label class="form-label">Adresse e-mail</label>
+                    <input type="email" name="email" class="form-control" value="{{ email }}" required>
+                </div>
 
-    {% if isMember %}
-        <h3>Section des Membres</h3>
-        <p>Bienvenue parmi les membres de la guilde.</p>
-    {% endif %}
+                <hr class="my-4">
 
-    {% if isRecruit %}
-        <h3>Section des Recrues</h3>
-        <p>Bienvenue dans la guilde !</p>
-    {% endif %}
+                <h5 class="text-white mb-3">Changer le mot de passe</h5>
+                <div class="mb-3">
+                    <label class="form-label">Nouveau mot de passe</label>
+                    <input type="password" name="password" class="form-control">
+                </div>
 
-    {% if isVisitor %}
-        <h3>Section des Visiteurs</h3>
-        <p>Vous avez un accès limité en tant que visiteur.</p>
-    {% endif %}
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-danger">Mettre à jour</button>
+                </div>
+            </form>
 
-    {% if isApplicant %}
-        <h3>Section des Postulants</h3>
-        <p>Votre candidature est en cours de traitement.</p>
-    {% endif %}
+            <div class="text-center mt-4">
+                <span class="badge bg-light text-dark">Rôle actuel : <strong>{{ role }}</strong></span>
+            </div>
 
-    <h3>Modifier vos informations</h3>
-    <form action="/profile/update" method="post">
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" name="email" id="email" value="{{ email }}" required>
+            {% if isGuildMaster %}
+                <div class="text-center mt-3">
+                    <span class="badge bg-warning text-dark">Maître de Guilde 👑</span>
+                </div>
+            {% endif %}
         </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Nouveau mot de passe</label>
-            <input type="password" class="form-control" name="password" id="password" placeholder="Laissez vide pour ne pas changer">
-        </div>
-        <button type="submit" class="btn btn-primary">Mettre à jour</button>
-    </form>
-
-    <a href="/" class="btn btn-secondary mt-3">Retour à l'accueil</a>
+    </div>
 {% endblock %}

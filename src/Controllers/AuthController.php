@@ -5,16 +5,18 @@ namespace App\Controllers;
 use App\Models\UserRepository;
 use App\Models\User;
 use App\Views\View;
-use App\Core\Auth;
+use App\Core\Security;
 
-class AuthController {
-
-    public function loginForm(): void {
+class AuthController
+{
+    public function loginForm(): void
+    {
         $view = new View();
         $view->render('login.html.twig');
     }
 
-    public function login(): void {
+    public function login(): void
+    {
         $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
 
@@ -22,77 +24,72 @@ class AuthController {
         $user = $userRepo->findByUsername($username);
 
         if ($user && $user->verifyPassword($password)) {
-            //session_start();
-            // Stocker un tableau avec les infos nécessaires
+            // Stocker uniquement les infos nécessaires dans la session
             $_SESSION['user'] = [
-                'id' => $user->getId(),
+                'id'       => $user->getId(),
                 'username' => $user->getUsername(),
-                'role' => $user->getRole()
-                ];
+                'role'     => $user->getRole()
+            ];
 
-            // Redirection vers le profil
             header('Location: /profile');
             exit;
         } else {
-            echo "Identifiants incorrects.";
+            $view = new View();
+            $view->render('login.html.twig', [
+                'error' => 'Identifiants incorrects.'
+            ]);
         }
     }
 
-
-    public function logout(): void {
-        //session_start();
+    public function logout(): void
+    {
         session_destroy();
         header('Location: /login');
         exit;
     }
 
-    public function registerForm(): void {
+    public function registerForm(): void
+    {
         $view = new View();
         $view->render('register.html.twig');
     }
 
-    public function register(): void {
-        // Démarrer le tampon de sortie pour éviter les erreurs d'en-tête
-        ob_start();
-
+    public function register(): void
+    {
         $username = htmlspecialchars(trim($_POST['username']), ENT_QUOTES, 'UTF-8');
         $email = htmlspecialchars(trim($_POST['email']), ENT_QUOTES, 'UTF-8');
-        $password = $_POST['password'];
-        $passwordConfirm = $_POST['password_confirm'];
+        $password = $_POST['password'] ?? '';
+        $passwordConfirm = $_POST['password_confirm'] ?? '';
 
-        // Vérification des champs
         if (empty($username) || empty($email) || empty($password) || empty($passwordConfirm)) {
-            $view = new View();
-            $view->render('register.html.twig', ['error' => 'Tous les champs sont requis.']);
-            ob_end_flush(); // Libérer le tampon avant de quitter
+            $this->renderRegisterError('Tous les champs sont requis.');
             return;
         }
 
-        // Vérification des mots de passe
         if ($password !== $passwordConfirm) {
-            $view = new View();
-            $view->render('register.html.twig', ['error' => 'Les mots de passe ne correspondent pas.']);
-            ob_end_flush(); // Libérer le tampon avant de quitter
+            $this->renderRegisterError('Les mots de passe ne correspondent pas.');
             return;
         }
 
         $userRepo = new UserRepository();
 
-        // Vérifier si l'utilisateur ou l'email existe déjà
         if ($userRepo->findByUsername($username) || $userRepo->findByEmail($email)) {
-            $view = new View();
-            $view->render('register.html.twig', ['error' => 'Nom d\'utilisateur ou email déjà utilisé.']);
-            ob_end_flush(); // Libérer le tampon avant de quitter
+            $this->renderRegisterError('Nom d\'utilisateur ou email déjà utilisé.');
             return;
         }
 
-        // Créer l'utilisateur
         $user = new User($username, $email, $password, 'member');
         $userRepo->save($user);
 
-        // Redirection vers la page de connexion
         header('Location: /login');
-        ob_end_flush(); // Libérer le tampon après la redirection
         exit;
+    }
+
+    private function renderRegisterError(string $message): void
+    {
+        $view = new View();
+        $view->render('register.html.twig', [
+            'error' => $message
+        ]);
     }
 }

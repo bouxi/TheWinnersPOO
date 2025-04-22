@@ -51,6 +51,7 @@ $router->addRoute('GET', '/logout', [new \App\Controllers\AuthController(), 'log
 $router->addRoute('GET', '/register', [new \App\Controllers\AuthController(), 'registerForm']);
 $router->addRoute('POST', '/register', [new \App\Controllers\AuthController(), 'register']);
 $router->addRoute('GET', '/profile', [new \App\Controllers\ProfileController(), 'index']);
+$router->addRoute('POST','/profile/update', [new \App\Controllers\ProfileController(), 'update']);
 
 // Routes d'administration
 $router->addRoute('GET', '/admin', [new \App\Controllers\AdminController(), 'dashboard']);
