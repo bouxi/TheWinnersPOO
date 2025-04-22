@@ -2,51 +2,71 @@
 
 namespace App\Controllers;
 
-use App\Core\Auth;
+use App\Core\Security;
 use App\Models\UserRepository;
 use App\Views\View;
+use App\Core\Utils;
 
-class ProfileController {
+class ProfileController
+{
+    public function index(): void
+    {
+        Security::requireAuth();
 
-    public function index(): void {
-        Auth::requireAuth();
-        $username = $_SESSION['user'];
+        $user = Security::getCurrentUser();
 
-        // Récupérer les informations complètes de l'utilisateur
-        $userRepo = new UserRepository();
-        $user = $userRepo->findByUsername($username);
+        if (!$user) {
+            echo "Utilisateur introuvable.";
+            return;
+        }
+
+        $success = $_GET['success'] ?? null;
+        $error = $_GET['error'] ?? null;
 
         $view = new View();
         $view->render('profile.html.twig', [
-            'username' => $user->getUsername(),
-            'email' => $user->getEmail(),
-            'role' => $user->getRole()
+            'isAuthenticated' => Security::isAuthenticated(),
+            'username'     => $user->getUsername(),
+            'email'        => $user->getEmail(),
+            'role'         => $user->getRole(),
+            'isAdmin'      => $user->isAdmin(),
+            'isGuildMaster'=> $user->isGuildMaster(),
+            'isOfficer'    => $user->isOfficer(),
+            'isVeteran'    => $user->isVeteran(),
+            'isMember'     => $user->isMember(),
+            'isRecruit'    => $user->isRecruit(),
+            'isVisitor'    => $user->isVisitor(),
+            'isApplicant'  => $user->isApplicant(),
+            'success'      => $success,
+            'error'        => $error
         ]);
     }
 
-    public function update(): void {
-        Auth::requireAuth();
-        $username = $_SESSION['user'];
+    public function update(): void
+    {
+        Security::requireAuth();
+
+        $user = Security::getCurrentUser();
+
+        if (!$user) {
+            Utils::redirectError('/profile', 'Utilisateur introuvable');
+        }
 
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
 
+        $user->setEmail($email);
+
+        if (!empty($password)) {
+            $user->setPassword($password);
+        }
+
         $userRepo = new UserRepository();
-        $user = $userRepo->findByUsername($username);
 
-        if ($user) {
-            $user->setEmail($email);
-
-            if (!empty($password)) {
-                $user->setPassword($password);
-            }
-
-            if ($userRepo->update($user)) {
-                header('Location: /profile');
-                exit;
-            } else {
-                echo "Erreur lors de la mise à jour.";
-            }
+        if ($userRepo->update($user)) {
+            Utils::redirectSuccess('/profile', 'Mise à jour réussie');
+        } else {
+            Utils::redirectError('/profile', 'Erreur lors de la mise à jour');
         }
     }
 }

@@ -25,12 +25,10 @@ class UserRepository {
     public function findByUsername(string $username): ?User {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE username = :username");
         $stmt->execute(['username' => $username]);
-        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if ($data) {
-
-
-            return new User($data['username'], $data['email'], $data['password'], $data['role'], true);
+            return new User($data['username'], $data['email'], $data['password'], $data['role'], true, (int)$data['id']);
         }
 
         return null;
@@ -43,6 +41,50 @@ class UserRepository {
             'email' => $user->getEmail(),
             'password' => $user->getPassword()
         ]);
+    }
+
+    public function getAllUsers(): array {
+        $stmt = $this->db->query("SELECT * FROM users");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function delete(int $id): bool {
+        $stmt = $this->db->prepare("DELETE FROM users WHERE id = :id");
+        return $stmt->execute(['id' => $id]);
+    }
+
+    public function findById(int $id): ?User {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :id");
+        $stmt->execute(['id' => $id]);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($data) {
+            return new User($data['username'], $data['email'], $data['password'], $data['role'], true, (int)$data['id']);
+        }
+
+        return null;
+    }
+
+    public function getTotalUsers(): int {
+        $stmt = $this->db->query("SELECT COUNT(*) as count FROM users");
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return (int)$result['count'];
+    }
+
+    public function getUsersByRole(): array {
+        $stmt = $this->db->query("SELECT role, COUNT(*) as count FROM users GROUP BY role");
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+    public function findByEmail(string $email): ?User {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email");
+        $stmt->execute(['email' => $email]);
+        $data = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if ($data) {
+            return new User($data['username'], $data['email'], $data['password'], $data['role'], true, (int)$data['id']);
+        }
+
+        return null;
     }
 
 }
