@@ -75,4 +75,44 @@ class User
     {
         return $this->username . ' (' . $this->email . ')';
     }
+    public function toArray(): array
+    {
+        return [
+            'id'            => $this->id,
+            'username'      => $this->username,
+            'email'         => $this->email,
+            'password'      => $this->password, // Attention : reste hashé !
+            'birthdate'     => $this->birthdate,
+            'avatar'        => $this->avatar,
+            'role'          => $this->role,
+            'date_inscription' => $this->date_inscription,
+        ];
+    }
+
+    /**
+     * Crée un objet User à partir d’un tableau (ex: depuis la session)
+     */
+    public static function fromArray(array $data): self
+    {
+        // ⚠️ Utilise les arguments obligatoires du constructeur
+        $user = new self(
+            $data['username'] ?? '',
+            $data['email'] ?? '',
+            $data['password'] ?? '',
+            $data['role'] ?? 'visitor',
+            true, // ✅ indique que le mot de passe est déjà hashé
+            $data['id'] ?? null
+        );
+
+        // 🛠️ On continue à setter les infos optionnelles
+        $user->setBirthdate($data['birthdate'] ?? null);
+        $user->setAvatar($data['avatar'] ?? 'default.png');
+        $user->setDateInscription($data['date_inscription'] ?? null);
+
+        return $user;
+    }
+
+
+
+
 }

@@ -7,49 +7,52 @@ use App\Models\UserRepository;
 
 class Security
 {
+    /**
+     * Vérifie si un utilisateur est connecté
+     */
     public static function isAuthenticated(): bool
     {
         return isset($_SESSION['user']);
     }
 
+    /**
+     * Redirige vers /login si l'utilisateur n’est pas connecté
+     */
     public static function requireAuth(): void
     {
         if (!self::isAuthenticated()) {
-            header('Location: /login');
-            exit;
+            Utils::redirect('/login');
         }
     }
 
+    /**
+     * Récupère l'utilisateur actuellement connecté (depuis la base)
+     */
     public static function getCurrentUser(): ?User
     {
-        if (!self::isAuthenticated()) {
+        // Vérifie que l'utilisateur est en session
+        if (!isset($_SESSION['user']) || !is_array($_SESSION['user'])) {
             return null;
         }
 
-        // Récupère uniquement le username de la session
-        $username = $_SESSION['user']->getUsername();
+        // Récupère l'ID utilisateur depuis la session
+        $userId = $_SESSION['user']['id'] ?? null;
 
-        if ($username === null) {
+        if (!$userId) {
             return null;
         }
 
-        // Recharge l'objet User depuis la base
-        $userRepo = new UserRepository();
-        return $userRepo->findByUsername($username);
+        // Recharge l'utilisateur complet depuis la base
+        $repo = new UserRepository();
+        return $repo->findById($userId); // retourne un User ou null
     }
 
-    public static function getCurrentUserId(): ?int
+    /**
+     * Déconnecte proprement l'utilisateur
+     */
+    public static function logout(): void
     {
-        return $_SESSION['user']['id'] ?? null;
-    }
-
-    public static function getCurrentUsername(): ?string
-    {
-        return $_SESSION['user']['username'] ?? null;
-    }
-
-    public static function getCurrentUserRole(): ?string
-    {
-        return $_SESSION['user']['role'] ?? null;
+        unset($_SESSION['user']);
+        session_destroy();
     }
 }

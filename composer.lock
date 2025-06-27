@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "772ed087a6b969519f3fc0b8aba48cf1",
+    "content-hash": "45a7e75dc94a3bfe9992d0054cd0b6a9",
     "packages": [
         {
             "name": "symfony/asset",

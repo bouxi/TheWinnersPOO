@@ -107,4 +107,18 @@ class UserRepository
 
         return $user;
     }
+
+    public function toArray(): array {
+        return [
+            'id' => $this->id,
+            'username' => $this->username,
+            'email' => $this->email,
+            'birthdate' => $this->birthdate,
+            'avatar' => $this->avatar,
+            'role' => $this->role,
+            'date_inscription' => $this->dateInscription,
+            'isHashed' => true,
+        ];
+    }
+
 }

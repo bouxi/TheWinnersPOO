@@ -17,6 +17,8 @@
 
             </div>
 
+
+
             <div class="container mt-4">
                 <h3>À propos de la guilde</h3>
                 <p>
@@ -38,7 +40,7 @@
             <div class="container mt-4">
                 <h3>Rejoignez-nous !</h3>
                 <p>Envie de faire partie de l'aventure ? Rejoignez-nous et participez aux activités de la guilde !</p>
-                {% if not username %}
+                {% if not user.username %}
                     <a href="/login" class="btn btn-success">Se connecter</a>
                 {% endif %}
             </div>

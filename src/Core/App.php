@@ -5,6 +5,19 @@ namespace App\Core;
 class App
 {
     private static array $config = [];
+    // Nouvelle ajout test 1
+    private static ?\Twig\Environment $twig = null;
+
+    /**
+     * Nouvelle ajout test 1 (deux methods)
+     */
+    public static function setTwig(\Twig\Environment $twig): void {
+        self::$twig = $twig;
+    }
+
+    public static function getTwig(): \Twig\Environment {
+        return self::$twig;
+    }
 
     /**
      * Charge la configuration depuis config.php (une seule fois)

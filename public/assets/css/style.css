@@ -31,12 +31,12 @@ body {
 }
 
 .navbar {
-    background-color: rgba(0, 0, 0, 0.40);
+    background-color: rgba(0, 0, 0, 0.45);
     border-radius: 0 0 15px 15px;
 }
 
 .formulaire-profile {
-    background-color: rgba(0, 0, 0, 0.40);
+    background-color: rgba(0, 0, 0, 0.45);
     border-radius: 15px;
     padding: 10px;
 }
@@ -72,8 +72,9 @@ ul {
     border-radius: 8px;
 }
 
+
 .main {
-    background-color: rgba(0, 0, 0, 0.33);
+    background-color: rgba(0, 0, 0, 0.45);
     border-radius: 15px;
 }
 

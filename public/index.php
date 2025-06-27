@@ -9,45 +9,53 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use App\Core\Bootstrap;
 use App\Core\Router;
 use App\Core\App;
+use App\Models\User;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
+use Twig\Extension\DebugExtension;
 
-// Démarrer la session si elle ne l’est pas déjà
+// 🚀 Démarrage session
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Initialisation de l’application
+// ⚙️ Boot de l'application
 Bootstrap::start();
 
-// Configuration de Twig
+// 🧩 Configuration de Twig
 $loader = new FilesystemLoader(__DIR__ . '/../templates');
-$twig = new Environment($loader);
+$twig = new Environment($loader, [
+    'debug' => true,
+]);
 
-// ✅ Utilisateur connecté ?
-$isAuthenticated = isset($_SESSION['user']);
-$twig->addGlobal('isAuthenticated', $isAuthenticated);
+// 📌 Injection dans App
+App::setTwig($twig);
 
-// ✅ Ajouter l’objet utilisateur si présent
-if ($isAuthenticated) {
-    $twig->addGlobal('user', $_SESSION['user']);
+// 🐞 Extension Debug (pour dump() etc.)
+$twig->addExtension(new DebugExtension());
+
+// ✅ Traitement de l'utilisateur en session
+if (isset($_SESSION['user']) && is_array($_SESSION['user'])) {
+    // On convertit en objet User complet
+    $userObject = User::fromArray($_SESSION['user']);
+    $twig->addGlobal('user', $userObject);
+    $twig->addGlobal('isAuthenticated', true);
+} else {
+    $twig->addGlobal('isAuthenticated', false);
 }
 
-// Fonction Twig pour asset()
+// 🛠️ Fonction asset()
 $twig->addFunction(new TwigFunction('asset', function ($path) {
     return App::getBasePath() . '/' . ltrim($path, '/');
 }));
 
-// Autres variables globales
+// 🗂️ Autres globals
 $twig->addGlobal('app_name', App::getAppName());
 $twig->addGlobal('base_path', App::getBasePath());
+$twig->addGlobal('isDevMode', App::isDevMode());
 
-// Création du routeur
+// 🧭 Routing
 $router = new Router();
-
-// Chargement des routes
 (require __DIR__ . '/../routes.php')($router);
-
-// Gestion de la requête
 $router->handleRequest();
