@@ -6,22 +6,24 @@ use App\Core\Twig;
 
 class HomeController {
     public function index(): void {
-        // Vérifier si la session est bien démarrée
+        // Vérifie que la session est démarrée
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
 
-        // Vérifier si l'utilisateur est connecté
-        //$username = $_SESSION['user'] ?? 'Invité';
-
+        // Vérifie si un utilisateur est connecté
         $isAuthenticated = isset($_SESSION['user']);
-        $username = $isAuthenticated ? $_SESSION['user']['username'] : null;
+        $user = $isAuthenticated ? $_SESSION['user'] : null;
 
-        // Obtenir l'instance Twig et rendre la page d'accueil
+        // Si connecté, récupère son nom d'utilisateur via la méthode getUsername()
+        $username = $isAuthenticated ? $user->getUsername() : 'Invité';
+
+        // Rendu de la vue avec les données nécessaires
         $twig = Twig::getInstance();
         echo $twig->render('home.html.twig', [
             'isAuthenticated' => $isAuthenticated,
-            'username' => $username
+            'user' => $user,
+            'username' => $username, // optionnel si utilisé dans le template
         ]);
     }
 }

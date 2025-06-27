@@ -2,30 +2,51 @@
 
 namespace App\Core;
 
-class Database {
-    private static ?\PDO $connection = null;
+use PDO;
+use PDOException;
 
-    public static function getConnection(): \PDO {
-        if (self::$connection === null) {
-            $dotenv = parse_ini_file(__DIR__ . '/../../.env');
+class Database
+{
+    private static ?PDO $connection = null;
 
-            // Récupération des informations de connexion
-            $host = $dotenv['DB_HOST'] ?? 'localhost';
-            $port = $dotenv['DB_PORT'] ?? '3306'; // Ajout du port par défaut 3306
-            $dbname = $dotenv['DB_NAME'] ?? 'thewinners';
-            $user = $dotenv['DB_USER'] ?? 'root';
-            $pass = $dotenv['DB_PASS'] ?? '';
+    /**
+     * Retourne une instance PDO connectée, en singleton
+     */
+    public static function getConnection(): PDO
+    {
+        // Si déjà connectée, retourne l'existante
+        if (self::$connection !== null) {
+            return self::$connection;
+        }
 
-            try {
-                // Utilisation du port dans la chaîne de connexion
-                $dsn = "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8";
-                self::$connection = new \PDO($dsn, $user, $pass);
-                self::$connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-            } catch (\PDOException $e) {
-                die("Erreur de connexion à la base de données : " . $e->getMessage());
-            }
+        try {
+            // Utilise les méthodes de App pour charger la config depuis config.php
+            $dsn = App::getDbDsn();         // mysql:host=...;port=...;dbname=...;charset=...
+            $user = App::getDbUser();       // utilisateur DB
+            $pass = App::getDbPassword();   // mot de passe DB
+
+            // Création de l'objet PDO
+            self::$connection = new PDO($dsn, $user, $pass, [
+                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES   => false,
+            ]);
+
+        } catch (PDOException $e) {
+            // En cas d'erreur, on jette une exception claire
+            throw new \RuntimeException('Erreur de connexion à la base de données : ' . $e->getMessage());
         }
 
         return self::$connection;
     }
+
+    /**
+     * Réinitialise complètement la connexion PDO.
+     * À utiliser avec précaution.
+     */
+    public static function reset(): void
+    {
+        self::$connection = null;
+    }
+
 }

@@ -5,86 +5,106 @@ namespace App\Models;
 use App\Core\Database;
 use PDO;
 
-class UserRepository {
+class UserRepository
+{
     private PDO $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = Database::getConnection();
     }
 
-    public function save(User $user): bool {
-        $stmt = $this->db->prepare("INSERT INTO users (username, email, password, role) VALUES (:username, :email, :password, :role)");
-        return $stmt->execute([
-            'username' => $user->getUsername(),
-            'email' => $user->getEmail(),
-            'password' => $user->getPassword(), // Cryptage du mot de passe
-            'role' => $user->getRole()
-        ]);
-    }
-
-    public function findByUsername(string $username): ?User {
+    public function findByUsername(string $username): ?User
+    {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE username = :username");
         $stmt->execute(['username' => $username]);
-        $data = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($data) {
-            return new User($data['username'], $data['email'], $data['password'], $data['role'], true, (int)$data['id']);
-        }
-
-        return null;
+        return $data ? $this->mapToUser($data) : null;
     }
 
-    public function update(User $user): bool {
-        $stmt = $this->db->prepare("UPDATE users SET email = :email, password = :password WHERE username = :username");
-        return $stmt->execute([
-            'username' => $user->getUsername(),
-            'email' => $user->getEmail(),
-            'password' => $user->getPassword()
-        ]);
+    public function findByEmail(string $email): ?User
+    {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email");
+        $stmt->execute(['email' => $email]);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $data ? $this->mapToUser($data) : null;
     }
 
-    public function getAllUsers(): array {
-        $stmt = $this->db->query("SELECT * FROM users");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function delete(int $id): bool {
-        $stmt = $this->db->prepare("DELETE FROM users WHERE id = :id");
-        return $stmt->execute(['id' => $id]);
-    }
-
-    public function findById(int $id): ?User {
+    public function findById(int $id): ?User
+    {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :id");
         $stmt->execute(['id' => $id]);
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($data) {
-            return new User($data['username'], $data['email'], $data['password'], $data['role'], true, (int)$data['id']);
-        }
-
-        return null;
+        return $data ? $this->mapToUser($data) : null;
     }
 
-    public function getTotalUsers(): int {
-        $stmt = $this->db->query("SELECT COUNT(*) as count FROM users");
-        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return (int)$result['count'];
-    }
-
-    public function getUsersByRole(): array {
-        $stmt = $this->db->query("SELECT role, COUNT(*) as count FROM users GROUP BY role");
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-    }
-    public function findByEmail(string $email): ?User {
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email");
+    public function existsByEmail(string $email): bool
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
         $stmt->execute(['email' => $email]);
-        $data = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        if ($data) {
-            return new User($data['username'], $data['email'], $data['password'], $data['role'], true, (int)$data['id']);
-        }
-
-        return null;
+        return $stmt->fetchColumn() > 0;
     }
 
+    public function save(User $user): bool
+    {
+        $stmt = $this->db->prepare("
+            INSERT INTO users (username, email, password, role, birthdate, avatar, date_inscription)
+            VALUES (:username, :email, :password, :role, :birthdate, :avatar, :date_inscription)
+        ");
+
+        return $stmt->execute([
+            'username'          => $user->getUsername(),
+            'email'             => $user->getEmail(),
+            'password'          => $user->getPassword(),
+            'role'              => $user->getRole(),
+            'birthdate'         => $user->getBirthdate(),
+            'avatar'            => $user->getAvatar(),
+            'date_inscription'  => $user->getDateInscription(),
+        ]);
+    }
+
+    public function update(User $user): bool
+    {
+        $stmt = $this->db->prepare("
+            UPDATE users SET
+                username = :username,
+                email = :email,
+                password = :password,
+                birthdate = :birthdate,
+                avatar = :avatar,
+                role = :role
+            WHERE id = :id
+        ");
+
+        return $stmt->execute([
+            'username'    => $user->getUsername(),
+            'email'     => $user->getEmail(),
+            'password'  => $user->getPassword(),
+            'birthdate' => $user->getBirthdate(),
+            'avatar'    => $user->getAvatar(),
+            'role'      => $user->getRole(),
+            'id'        => $user->getId(),
+        ]);
+    }
+
+    private function mapToUser(array $data): User
+    {
+        $user = new User(
+            $data['username'],
+            $data['email'],
+            $data['password'],
+            $data['role'],
+            (bool) ($data['is_verified'] ?? true),
+            (int) $data['id'] ?? null
+        );
+
+        $user->setAvatar($data['avatar'] ?? null);
+        $user->setBirthdate($data['birthdate'] ?? null);
+        $user->setDateInscription($data['date_inscription'] ?? null);
+
+        return $user;
+    }
 }

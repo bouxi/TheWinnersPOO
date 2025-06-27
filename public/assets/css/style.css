@@ -1,6 +1,7 @@
 html, body {
     height: 100%;
     font-family: "Comic Sans MS", cursive;
+    font-size: 18px;
 }
 
 body {
@@ -31,7 +32,13 @@ body {
 
 .navbar {
     background-color: rgba(0, 0, 0, 0.40);
+    border-radius: 0 0 15px 15px;
+}
+
+.formulaire-profile {
+    background-color: rgba(0, 0, 0, 0.40);
     border-radius: 15px;
+    padding: 10px;
 }
 
 .navbar-brand img {
@@ -85,4 +92,8 @@ a {
 a:hover {
     text-decoration: underline;
     text-shadow: black 0.1em 0.1em 0.2em;
+}
+
+#delete_avatar {
+    margin-right: 5px;
 }

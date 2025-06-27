@@ -5,7 +5,7 @@
 {% block content %}
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            <h2 class="text-center mb-4">Profil de {{ username }}</h2>
+            <h2 class="text-center mb-4">Profil de {{ user.username }}</h2>
 
             {% if success %}
                 <div class="alert alert-success text-center">
@@ -19,23 +19,68 @@
                 </div>
             {% endif %}
 
-            <form method="post" action="/profile/update" class="bg-secondary p-4 rounded shadow">
+            <form method="post" action="/profile/update" enctype="multipart/form-data" class="formulaire-profile">
                 <div class="mb-3">
                     <label class="form-label">Nom d'utilisateur</label>
-                    <input type="text" class="form-control" value="{{ username }}" disabled>
+                    <input type="text" class="form-control" value="{{ user.username }}" disabled>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Adresse e-mail</label>
-                    <input type="email" name="email" class="form-control" value="{{ email }}" required>
+                    <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                </div>
+
+
+
+
+                <!-- Date de naissance -->
+                <div class="mb-3">
+                    <label for="birthdate" class="form-label">Date de naissance</label>
+                    <input type="date" name="birthdate" id="birthdate" class="form-control" value="{{ user.birthdate }}">
+                </div>
+
+                <!-- AVATAR -->
+
+
+                <div class="mb-3 text-center">
+                    <img id="avatarPreview"
+                         src="{{ user.avatar ? '/uploads/avatars/' ~ user.avatar : '/assets/images/default-avatar.png' }}"
+                         alt="Aperçu de l’avatar"
+                         class="rounded-circle shadow"
+                         width="100" height="100">
+
+                </div>
+
+                <!-- Suppresion AVATAR si existant -->
+                <div class="mb-3 text-center">
+                    <!-- Case à cocher pour supprimer l’avatar -->
+                    {% if user.avatar %} {# il faut modifier en user.avatar pour être plus clair #}
+                        <div class="form-check mt-2">
+                            <input type="checkbox" name="delete_avatar" id="delete_avatar" value="1">
+                            <label for="delete_avatar">Supprimer l’avatar actuel</label>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="avatar" class="form-label">Changer l'avatar</label>
+                    <input type="file" name="avatar" id="avatar" class="form-control" accept="image/*">
                 </div>
 
                 <hr class="my-4">
 
                 <h5 class="text-white mb-3">Changer le mot de passe</h5>
+                <!-- Nouveau mot de passe -->
                 <div class="mb-3">
                     <label class="form-label">Nouveau mot de passe</label>
                     <input type="password" name="password" class="form-control">
+                </div>
+
+                <!-- Vérification du mot de passe -->
+                <div class="mb-3">
+                    <label for="current_password" class="form-label">Mot de passe actuel <span class="text-danger">*</span></label>
+                    <input type="password" name="current_password" id="current_password" class="form-control" autofocus required>
+                    <small class="form-text text-light">Nécessaire pour enregistrer les modifications</small>
                 </div>
 
                 <div class="d-grid">
@@ -43,15 +88,30 @@
                 </div>
             </form>
 
+
+
             <div class="text-center mt-4">
-                <span class="badge bg-light text-dark">Rôle actuel : <strong>{{ role }}</strong></span>
+                <span class="badge bg-light text-dark">Rôle actuel : <strong>{{ user.role }}</strong></span>
             </div>
 
-            {% if isGuildMaster %}
+            {% if user.isGuildMaster %}
                 <div class="text-center mt-3">
                     <span class="badge bg-warning text-dark">Maître de Guilde 👑</span>
                 </div>
             {% endif %}
         </div>
     </div>
+
+    <script>
+        const avatarInput = document.getElementById('avatar');
+        const avatarPreview = document.getElementById('avatarPreview');
+
+        avatarInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                avatarPreview.src = url;
+            }
+        });
+    </script>
 {% endblock %}

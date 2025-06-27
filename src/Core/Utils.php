@@ -5,40 +5,51 @@ namespace App\Core;
 class Utils
 {
     /**
-     * Redirige vers un chemin relatif, en tenant compte du dossier d'installation du projet.
-     *
-     * @param string $relativePath Chemin relatif à partir de la racine du projet (ex: "/profile")
+     * Redirige vers une URL interne (ex: 'profile' ou '/profile')
      */
     public static function redirect(string $relativePath): void
     {
-        // S'assurer que le chemin commence bien par un "/"
+        // Force le slash en début
         if (substr($relativePath, 0, 1) !== '/') {
             $relativePath = '/' . $relativePath;
         }
 
-        // Récupère le chemin de base (ex: /thewinners/public)
-        $base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
-
-        // Construit l'URL finale
-        $url = $base . $relativePath;
+        // Utilise le basePath pour compatibilité avec /public ou sous-dossiers
+        $url = App::getBasePath() . $relativePath;
 
         header("Location: $url");
         exit;
     }
 
     /**
-     * Redirige avec un message de succès via GET (ex: ?success=...)
+     * Redirige vers une URL en ajoutant un message flash "success"
      */
-    public static function redirectSuccess(string $relativePath, string $message): void
+    public static function redirectSuccess(string $url, string $message): void
     {
-        self::redirect($relativePath . '?success=' . urlencode($message));
+        // Force le slash devant l’URL
+        if (substr($url, 0, 1) !== '/') {
+            $url = '/' . $url;
+        }
+
+        // Préfixe avec base path si nécessaire
+        $finalUrl = App::getBasePath() . $url . '?success=' . urlencode($message);
+
+        header("Location: $finalUrl");
+        exit;
     }
 
     /**
-     * Redirige avec un message d'erreur via GET (ex: ?error=...)
+     * Redirige vers une URL en ajoutant un message flash "error"
      */
-    public static function redirectError(string $relativePath, string $message): void
+    public static function redirectError(string $url, string $message): void
     {
-        self::redirect($relativePath . '?error=' . urlencode($message));
+        if (substr($url, 0, 1) !== '/') {
+            $url = '/' . $url;
+        }
+
+        $finalUrl = App::getBasePath() . $url . '?error=' . urlencode($message);
+
+        header("Location: $finalUrl");
+        exit;
     }
 }

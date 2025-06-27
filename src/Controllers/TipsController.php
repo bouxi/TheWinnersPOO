@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Core\Database;
 use App\Core\Twig;
 use App\Core\Controller;
 use Twig\Error\LoaderError;
@@ -85,7 +86,7 @@ class TipsController extends Controller {
         }
 
         // Préparer l'insertion dans la base de données
-        $pdo = \App\Core\Database::getConnection();
+        $pdo = Database::getConnection();
         $stmt = $pdo->prepare("INSERT INTO tips (title, category, content, id_author) VALUES (?, ?, ?, ?)");
         $stmt->execute([$title, $category, $content, $_SESSION['user_id']]);
 

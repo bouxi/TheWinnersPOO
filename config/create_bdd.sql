@@ -1,3 +1,15 @@
+CREATE TABLE users
+(
+    id        INT AUTO_INCREMENT PRIMARY KEY,
+    username  VARCHAR(50),
+    email     VARCHAR(100),
+    password  VARCHAR(255),
+    role      VARCHAR(20),
+    birthdate DATE NULL,
+    date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP,
+    avatar    VARCHAR(255) NULL
+);
+
 CREATE TABLE tips (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -17,5 +29,4 @@ CREATE TABLE comments (
     FOREIGN KEY (tip_id) REFERENCES tips(id) ON DELETE CASCADE
 );
 
-ALTER TABLE users
-ADD COLUMN avatar LONGBLOB NOT NULL AFTER email;
+

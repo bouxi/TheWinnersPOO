@@ -27,7 +27,7 @@ class Security
         }
 
         // Récupère uniquement le username de la session
-        $username = $_SESSION['user']['username'] ?? null;
+        $username = $_SESSION['user']->getUsername();
 
         if ($username === null) {
             return null;

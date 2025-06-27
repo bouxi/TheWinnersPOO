@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Models\UserRepository;
 
 $userRepo = new UserRepository();
-$user = new User('Bouxi', 'bouxi@example.com', 'password123', 'admin');
+$user = new User('Bouxi', 'bouxi@example.com', '$2y$12$VW67v9brNzhklAwu9095neemQSnVdCaJVSPH9h3EarBpbGBa9McLG', 'admin', '1986-12-24');
 
 if ($userRepo->save($user)) {
     echo "Utilisateur enregistré avec succès !";
