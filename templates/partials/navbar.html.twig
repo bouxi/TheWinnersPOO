@@ -36,6 +36,21 @@
                          class="rounded-circle shadow"
                          width="40" height="40">
                 </div>
+
+                {% if isAuthenticated %}
+                    <a href="/messages" class="position-relative text-light mx-2">
+                        <i class="fas fa-envelope"></i>
+                        {% if unreadMessages > 0 %}
+                            <span id="message-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ unreadMessages|default(0) }}
+                            </span>
+                        {% endif %}
+                    </a>
+                {% endif %}
+
+
+
+
             {% endif %}
 
             <ul class="navbar-nav">
@@ -58,3 +73,25 @@
         </div>
     </div>
 </nav>
+
+{% block javascripts %}
+    <script>
+        function updateEnvelopeCount() {
+            fetch('/messages/unread-count')
+                .then(res => res.json())
+                .then(data => {
+                    const badge = document.getElementById('message-count');
+                    if (badge) {
+                        badge.textContent = data.count;
+                        badge.style.display = (parseInt(data.count) === 0) ? 'none' : 'inline-block';
+                    }
+                })
+                .catch(err => console.error("Erreur compteur navbar:", err));
+        }
+
+        setInterval(updateEnvelopeCount, 10000); // toutes les 10 secondes
+        updateEnvelopeCount(); // au chargement
+    </script>
+
+
+{% endblock %}

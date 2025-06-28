@@ -17,22 +17,21 @@ class Router {
 
     // Gérer la requête et router vers le bon contrôleur
     public function handleRequest(): void {
-        $path = $_SERVER['REQUEST_URI'] ?? '/';
+        $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); // ✅ correction ici
         $method = $_SERVER['REQUEST_METHOD'];
 
         foreach ($this->routes as $route) {
-            // Vérifier la méthode et le chemin
             if ($method === $route['method'] && preg_match($this->convertPathToRegex($route['path']), $path, $matches)) {
-                array_shift($matches); // Retirer le premier élément (chemin complet)
+                array_shift($matches); // on enlève le chemin complet
                 call_user_func_array($route['callback'], $matches);
                 return;
             }
         }
 
-        // Si aucune route ne correspond
         http_response_code(404);
         echo "404 - Page non trouvée";
     }
+
 
     // Convertir le chemin en expression régulière pour prendre en charge les paramètres dynamiques
     private function convertPathToRegex(string $path): string {

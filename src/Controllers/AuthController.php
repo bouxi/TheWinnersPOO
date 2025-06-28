@@ -2,12 +2,11 @@
 
 namespace App\Controllers;
 
-use App\Models\UserRepository;
-use App\Models\User;
-use App\Views\View;
-use App\Core\Security;
 use App\Core\Utils;
+use App\Models\User;
+use App\Repositories\UserRepository;
 use App\Services\UploadService;
+use App\Views\View;
 
 class AuthController
 {

@@ -7,7 +7,7 @@ use App\Core\App;
 use App\Core\Database;
 use App\Core\Router;
 use App\Models\User;
-use App\Models\UserRepository;
+use App\Repositories\UserRepository;
 
 // Charge la config
 App::loadConfig();

@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Models\User;
-use App\Models\UserRepository;
+use App\Repositories\UserRepository;
 
 // Définir les infos du compte admin
 $pseudo = 'Bouxi003';

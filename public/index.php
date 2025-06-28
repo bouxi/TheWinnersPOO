@@ -10,6 +10,7 @@ use App\Core\Bootstrap;
 use App\Core\Router;
 use App\Core\App;
 use App\Models\User;
+use App\Repositories\MessageRepository; // 🔥 ajoute ce use
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
@@ -37,12 +38,21 @@ $twig->addExtension(new DebugExtension());
 
 // ✅ Traitement de l'utilisateur en session
 if (isset($_SESSION['user']) && is_array($_SESSION['user'])) {
-    // On convertit en objet User complet
     $userObject = User::fromArray($_SESSION['user']);
     $twig->addGlobal('user', $userObject);
     $twig->addGlobal('isAuthenticated', true);
+
+    // 🔴 Ajoute ça :
+    $unreadCount = (new \App\Repositories\MessageRepository())->findUnreadCountByUserId($userObject->getId());
+    $twig->addGlobal('unreadCount', $unreadCount);
+
+    // Ajout compteur de messages non lus
+    $messageRepo = new MessageRepository();
+    $unreadCount = $messageRepo->findUnreadCountByUserId($userObject->getId());
+    $twig->addGlobal('unreadMessages', $unreadCount);
 } else {
     $twig->addGlobal('isAuthenticated', false);
+    $twig->addGlobal('unreadMessages', 0);
 }
 
 // 🛠️ Fonction asset()

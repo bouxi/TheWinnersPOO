@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Repositories;
 
 use App\Core\Database;
+use App\Models\User;
 use PDO;
 
 class UserRepository
@@ -108,17 +109,21 @@ class UserRepository
         return $user;
     }
 
-    public function toArray(): array {
-        return [
-            'id' => $this->id,
-            'username' => $this->username,
-            'email' => $this->email,
-            'birthdate' => $this->birthdate,
-            'avatar' => $this->avatar,
-            'role' => $this->role,
-            'date_inscription' => $this->dateInscription,
-            'isHashed' => true,
-        ];
+
+
+    // Retourne tous les utilisateurs (triés par nom)
+    public function findAll(): array
+    {
+        $stmt = $this->db->query('SELECT * FROM users ORDER BY username ASC');
+        $users = [];
+
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $users[] = $this->mapToUser($row);
+        }
+
+        return $users;
     }
+
+
 
 }

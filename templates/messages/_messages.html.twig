@@ -1,0 +1,21 @@
+{% if messages is empty %}
+    <p>Aucun message.</p>
+{% else %}
+    <ul class="list-group">
+        {% for msg in messages %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="/messages/read/{{ msg.id }}">
+                    {{ msg.content|slice(0, 40) }}{% if msg.content|length > 40 %}...{% endif %}
+                </a>
+                <span>
+                    {% if not msg.isRead %}
+                        <span class="badge bg-warning">Non lu</span>
+                    {% endif %}
+                    <form method="post" action="/messages/delete/{{ msg.id }}" class="d-inline">
+                        <button class="btn btn-sm btn-outline-danger">🗑</button>
+                    </form>
+                </span>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}

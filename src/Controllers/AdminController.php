@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Core\Auth;
-use App\Models\UserRepository;
+use App\Repositories\UserRepository;
 use App\Views\View;
 
 class AdminController {

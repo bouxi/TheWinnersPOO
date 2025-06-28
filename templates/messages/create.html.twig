@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau message{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center mt-5 text-center">
+        <div class="col-md-8 col-lg-6">
+            <h2>✉️ Envoyer un message</h2>
+            <form method="post" action="/messages/send">
+                <div class="mb-3">
+                    <label for="recipient_id" class="form-label">Destinataire :</label>
+                    <select name="recipient_id" id="recipient_id" class="form-select" required>
+                        {% for u in users %}
+                            {% if u.id != user.id %}
+                                <option value="{{ u.id }}">{{ u.username }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="content" class="form-label">Message :</label>
+                    <textarea name="content" id="content" class="form-control" rows="4" required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-success">Envoyer</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

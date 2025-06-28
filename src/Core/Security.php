@@ -3,7 +3,7 @@
 namespace App\Core;
 
 use App\Models\User;
-use App\Models\UserRepository;
+use App\Repositories\UserRepository;
 
 class Security
 {

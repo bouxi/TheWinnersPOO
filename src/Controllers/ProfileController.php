@@ -4,11 +4,9 @@ namespace App\Controllers;
 
 use App\Core\Security;
 use App\Core\Utils;
-use App\Models\UserRepository;
+use App\Repositories\UserRepository;
 use App\Services\UploadService;
 use App\Views\View;
-use App\Models\User;
-use App\Core\App;
 
 class ProfileController
 {

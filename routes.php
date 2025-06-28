@@ -6,6 +6,7 @@ use App\Controllers\AuthController;
 use App\Controllers\HomeController;
 use App\Controllers\ProfileController;
 use App\Controllers\TipsController;
+use App\Controllers\MessageController;
 use App\Core\Router;
 
 /**
@@ -28,6 +29,17 @@ return function (Router $router): void {
     $router->addRoute('GET', '/profile', [new ProfileController(), 'index']);
     $router->addRoute('POST','/profile/update', [new ProfileController(), 'update']);
     $router->addRoute('POST', '/profile/remove-avatar', [new ProfileController(), 'removeAvatar']);
+
+    // Messagerie instantanée
+    $router->addRoute('GET', '/messages', [new MessageController(), 'index']);
+    $router->addRoute('GET', '/messages/new', [new MessageController(), 'create']);
+    $router->addRoute('POST', '/messages/send', [new MessageController(), 'send']);
+    $router->addRoute('GET', '/messages/read/{id}', [new MessageController(), 'read']);
+    $router->addRoute('POST', '/messages/delete/{id}', [new MessageController(), 'delete']);
+    $router->addRoute('GET', '/messages/reply/{id}', [new MessageController(), 'reply']);
+    $router->addRoute('GET', '/messages/fetch', [new MessageController(), 'fetch']);
+    $router->addRoute('GET', '/messages/unread-count', [new MessageController(), 'unreadCount']);
+
 
     // Administration
     $router->addRoute('GET', '/admin', [new AdminController(), 'dashboard']);

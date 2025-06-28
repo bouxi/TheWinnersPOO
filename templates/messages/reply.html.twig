@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Répondre à {{ recipient.username }}{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center text-center">
+        <div class="col-md-8 col-lg-6">
+            <h2>
+                Répondre à {{ recipient.username }}
+                {% set avatarPath = message.getSender.avatar ? 'uploads/avatars/' ~ message.getSender.avatar : 'assets/images/default-avatar.png' %}
+                <img src="{{ asset(avatarPath) }}" class="rounded-circle me-2" width="40">
+
+            </h2>
+            <form method="post" action="/messages/send">
+                <input type="hidden" name="recipient_id" value="{{ recipient.id }}">
+                <div class="mb-3">
+                    <label for="content" class="form-label">Votre message</label>
+                    <textarea name="content" id="content" class="form-control" rows="5" required></textarea>
+                </div>
+                <div class="d-grid">
+                    <button class="btn btn-success">Envoyer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
