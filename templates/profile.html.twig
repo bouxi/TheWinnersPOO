@@ -3,77 +3,71 @@
 {% block title %}Mon profil - TheWinners{% endblock %}
 
 {% block content %}
-    <div class="main">
-        <div class="row justify-content-center text-center">
-            <div class="col-md-3 col-lg-4">
+    <div class="main-profile">
+        <div class="text-center">
+            <div class="">
                 <h2 class="mb-4">Profil de {{ user.username }}</h2>
 
-                <form method="post" action="/profile/update" enctype="multipart/form-data" class="p-4">
-                    <div class="mb-3">
-                        <label class="form-label">Nom d'utilisateur</label>
+                <form method="post" id="formulaire-profile" action="{{ base_path }}/profile/update" enctype="multipart/form-data" class="p-4">
+
+                    <!-- Ligne 1 -->
+                    <div>
+                        <label>Nom d'utilisateur</label>
                         <input type="text" class="form-control" value="{{ user.username }}" disabled>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Adresse e-mail</label>
+                    <div>
+                        <label>Adresse e-mail</label>
                         <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
                     </div>
 
-
-                    <!-- Date de naissance -->
-                    <div class="mb-3">
-                        <label for="birthdate" class="form-label">Date de naissance</label>
-                        <input type="date" name="birthdate" id="birthdate" class="form-control" value="{{ user.birthdate }}">
+                    <!-- Ligne 2 -->
+                    <div>
+                        <label>Date de naissance</label>
+                        <input type="date" name="birthdate" class="form-control" value="{{ user.birthdate }}">
                     </div>
 
-                    <!-- AVATAR -->
+                    <div>
+                        <label>Changer l'avatar</label>
+                        <input type="file" name="avatar" class="form-control" accept="image/*">
+                    </div>
 
-
-                    <div class="mb-3 text-center">
+                    <!-- Avatar Preview (pleine largeur) -->
+                    <div class="full-width text-center">
                         <img id="avatarPreview"
-                             src="{{ user.avatar ? '/uploads/avatars/' ~ user.avatar : '/assets/images/default-avatar.png' }}"
-                             alt="Aperçu de l’avatar"
+                             src="{{ user.avatar ? base_path ~ '/uploads/avatars/' ~ user.avatar : base_path ~ '/assets/images/default-avatar.png' }}"
+                             alt="Avatar"
                              class="rounded-circle shadow"
                              width="100" height="100">
-
                     </div>
 
-                    <!-- Suppresion AVATAR si existant -->
-                    <div class="mb-3 text-center">
-                        <!-- Case à cocher pour supprimer l’avatar -->
-                        {% if user.avatar %} {# il faut modifier en user.avatar pour être plus clair #}
-                            <div class="form-check mt-2">
-                                <input type="checkbox" name="delete_avatar" id="delete_avatar" value="1">
-                                <label for="delete_avatar">Supprimer l’avatar actuel</label>
-                            </div>
-                        {% endif %}
-                    </div>
+                    <!-- Suppression avatar -->
+                    {% if user.avatar %}
+                        <div class="full-width text-center">
+                            <label><input type="checkbox" name="delete_avatar" value="1"> Supprimer avatar actuel</label>
+                        </div>
+                    {% endif %}
 
-                    <div class="mb-3">
-                        <label for="avatar" class="form-label">Changer l'avatar</label>
-                        <input type="file" name="avatar" id="avatar" class="form-control" accept="image/*">
-                    </div>
+                    <hr class="full-width">
 
-                    <hr class="my-4">
-
-                    <h5 class="text-white mb-3">Changer le mot de passe</h5>
-                    <!-- Nouveau mot de passe -->
-                    <div class="mb-3">
-                        <label class="form-label">Nouveau mot de passe</label>
+                    <!-- Mot de passe -->
+                    <div>
+                        <label>Nouveau mot de passe</label>
                         <input type="password" name="password" class="form-control">
                     </div>
 
-                    <!-- Vérification du mot de passe -->
-                    <div class="mb-3">
-                        <label for="current_password" class="form-label">Mot de passe actuel <span class="text-danger">*</span></label>
-                        <input type="password" name="current_password" id="current_password" class="form-control" required>
-                        <small class="form-text text-light">Nécessaire pour enregistrer les modifications</small>
+                    <div>
+                        <label>Mot de passe actuel</label>
+                        <input type="password" name="current_password" class="form-control" required>
                     </div>
 
-                    <div class="d-grid">
+                    <div class="full-width d-grid">
                         <button type="submit" class="btn btn-danger">Mettre à jour</button>
                     </div>
                 </form>
+
+
+
 
 
 

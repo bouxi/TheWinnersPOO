@@ -78,6 +78,62 @@ ul {
     border-radius: 15px;
 }
 
+.main-profile {
+    background-color: rgba(0, 0, 0, 0.45);
+    border-radius: 15px;
+    padding: 15px;
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+/* Formulaire profil en 2 colonnes */
+#formulaire-profile {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 💡 Deux colonnes fixes */
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+
+/* Pour forcer certains éléments à prendre toute la largeur */
+.full-width {
+    grid-column: 1 / -1;
+}
+
+#formulaire-profile .mb-3,
+#formulaire-profile .d-grid,
+#formulaire-profile hr,
+#formulaire-profile h5 {
+    grid-column: span 2; /* prend toute la largeur */
+}
+
+#formulaire-profile img,
+#formulaire-profile .form-check {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+.main-login {
+    background-color: rgba(0, 0, 0, 0.45); /* semi-transparent */
+    border-radius: 15px;
+    padding: 15px;
+    max-width: 900px; /* ✅ réduis cette valeur si besoin */
+    width: 100%;
+    margin: 40px auto; /* centre horizontalement */
+}
+
+@media (max-width: 480px) {
+    .main-login {
+        max-width: 90%;
+        padding: 15px;
+    }
+}
+
+
 h2, h3 {
     color: #f39c12;
 }
@@ -98,3 +154,20 @@ a:hover {
 #delete_avatar {
     margin-right: 5px;
 }
+
+.navbar-toggler {
+    border-color: white !important; /* ou aliceblue si tu préfères */
+}
+
+/* Forcer les 3 barres en blanc */
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='white' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E") !important;
+}
+
+/*
+@media (max-width: 991.98px) {
+    .navbar-toggler-icon {
+        background-image: url("...svg white") !important;
+    }
+}
+*/

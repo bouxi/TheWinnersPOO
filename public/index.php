@@ -25,6 +25,11 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+/*
+var_dump($_SERVER['REQUEST_URI']);
+exit;
+*/
+
 // ⚙️ Chargement de l'environnement
 Env::load(); // charge les variables de ton fichier .env
 
@@ -60,9 +65,16 @@ if (isset($_SESSION['user']) && is_array($_SESSION['user'])) {
     $twig->addGlobal('unreadMessages', 0);
 }
 
+/*
 // 🛠️ Fonction asset() disponible dans Twig
-$twig->addFunction(new TwigFunction('asset', function ($path) {
+$twig->addFunction(new TwigFunction('asset', function (string $path): string {
     return App::getBasePath() . '/' . ltrim($path, '/');
+}));
+*/
+
+// Fonction asset() disponible dans Twig
+$twig->addFunction(new TwigFunction('asset', function ($asset) {
+    return sprintf('/assets/%s', ltrim($asset, '/'));
 }));
 
 // 🌍 Variables globales supplémentaires

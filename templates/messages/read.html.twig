@@ -7,7 +7,7 @@
         <div class="col-md-6 col-lg-6">
             <h2 class="mb-4">📨 Message</h2>
             <p><strong>De : {{ message.getSender.username }}</strong>
-                {% set avatarPath = message.getSender.avatar ? 'uploads/avatars/' ~ message.getSender.avatar : 'assets/images/default-avatar.png' %}
+                {% set avatarPath = message.getSender.avatar ? base_path ~  'uploads/avatars/' ~ message.getSender.avatar : base_path ~  'assets/images/default-avatar.png' %}
                 <img src="{{ asset(avatarPath) }}" class="rounded-circle me-2" width="40">
 
             </p>

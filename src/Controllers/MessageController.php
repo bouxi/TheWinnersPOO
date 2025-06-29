@@ -19,6 +19,7 @@ class MessageController
         $messages = $repo->findAllByUserId($user->getId());
 
         (new View())->render('messages/index.html.twig', [
+            'user' => $user,
             'messages' => $messages,
         ]);
     }

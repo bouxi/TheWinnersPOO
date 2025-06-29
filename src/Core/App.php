@@ -13,6 +13,14 @@ class App
      */
     public static function setTwig(\Twig\Environment $twig): void {
         self::$twig = $twig;
+
+        // Ajout de base_path pour tous les templates
+        $twig->addGlobal('base_path', self::getBasePath());
+
+        // Injection globale de l'utilisateur connecté
+        if (\App\Core\Security::isAuthenticated()) {
+            $twig->addGlobal('user', \App\Core\Security::getCurrentUser());
+        }
     }
 
     public static function getTwig(): \Twig\Environment {

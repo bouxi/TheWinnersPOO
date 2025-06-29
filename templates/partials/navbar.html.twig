@@ -31,7 +31,7 @@
                     <a href="/profile" class="text-white text-decoration-none me-2 fw-semibold">
                         {{ user.username }}
                     </a>
-                    <img src="{{ user.avatar ? '/uploads/avatars/' ~ user.avatar : '/assets/images/default-avatar.png' }}"
+                    <img src="{{ user and user.avatar ? base_path ~ '/uploads/avatars/' ~ user.avatar : base_path ~ '/assets/images/default-avatar.png' }}"
                          alt="Avatar de {{ user.username }}"
                          class="rounded-circle shadow"
                          width="40" height="40">
@@ -56,22 +56,22 @@
             <ul class="navbar-nav">
                 {% if isAuthenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/profile">Mon Profil</a>
+                        <a class="nav-link" href="{{ base_path }}profile">Mon Profil</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/logout">Déconnexion</a>
+                        <a class="nav-link" href="{{ base_path }}/logout">Déconnexion</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/login">Connexion</a>
+                        <a class="nav-link" href="{{ base_path }}/login">Connexion</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/register">Inscription</a>
+                        <a class="nav-link" href="{{ base_path }}/register">Inscription</a>
                     </li>
                 {% endif %}
                 {% if app.user is defined and app.user.role in ['admin', 'guild_master'] %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin">Admin</a>
+                        <a class="nav-link" href="{{ base_path }}/admin">Admin</a>
                     </li>
                 {% endif %}
 
@@ -103,7 +103,7 @@
 
                     }
 
-                    lastCount = count;
+                    var lastCount = count;
                 })
                 .catch(err => console.error("Erreur compteur navbar:", err));
         }
