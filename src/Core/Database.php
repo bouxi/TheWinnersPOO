@@ -10,22 +10,26 @@ class Database
     private static ?PDO $connection = null;
 
     /**
-     * Retourne une instance PDO connectée, en singleton
+     * Retourne une instance PDO connectée (singleton)
      */
     public static function getConnection(): PDO
     {
-        // Si déjà connectée, retourne l'existante
         if (self::$connection !== null) {
             return self::$connection;
         }
 
         try {
-            // Utilise les méthodes de App pour charger la config depuis config.php
-            $dsn = App::getDbDsn();         // mysql:host=...;port=...;dbname=...;charset=...
-            $user = App::getDbUser();       // utilisateur DB
-            $pass = App::getDbPassword();   // mot de passe DB
+            // Charge la configuration de l'environnement
+            Env::load();
 
-            // Création de l'objet PDO
+            $host = Env::get('DB_HOST', '127.0.0.1');
+            $port = Env::get('DB_PORT', '3306');
+            $name = Env::get('DB_NAME', 'thewinners');
+            $user = Env::get('DB_USER', 'root');
+            $pass = Env::get('DB_PASS', '');
+
+            $dsn = "mysql:host=$host;port=$port;dbname=$name;charset=utf8mb4";
+
             self::$connection = new PDO($dsn, $user, $pass, [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -33,7 +37,6 @@ class Database
             ]);
 
         } catch (PDOException $e) {
-            // En cas d'erreur, on jette une exception claire
             throw new \RuntimeException('Erreur de connexion à la base de données : ' . $e->getMessage());
         }
 
@@ -42,11 +45,25 @@ class Database
 
     /**
      * Réinitialise complètement la connexion PDO.
-     * À utiliser avec précaution.
      */
     public static function reset(): void
     {
         self::$connection = null;
     }
 
+    /**
+     * Retourne true si on est en environnement de développement
+     */
+    public static function isDev(): bool
+    {
+        return Env::get('APP_ENV', 'prod') === 'dev';
+    }
+
+    /**
+     * Retourne true si on est en environnement de production
+     */
+    public static function isProd(): bool
+    {
+        return Env::get('APP_ENV', 'prod') === 'prod';
+    }
 }

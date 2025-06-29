@@ -3,8 +3,8 @@
 namespace App\Core;
 
 class Auth {
+    // Et une méthode check() qui valide si l'utilisateur est connecté
     public static function check(): bool {
-       // session_start();
         return isset($_SESSION['user']);
     }
 
@@ -16,9 +16,10 @@ class Auth {
     }
 
     public static function requireRole(array $roles): void {
-        if (!self::check() || !in_array($_SESSION['role'], $roles)) {
+        if (!self::check() || !isset($_SESSION['user']['role']) || !in_array($_SESSION['user']['role'], $roles)) {
             header('Location: /');
             exit;
         }
     }
+
 }

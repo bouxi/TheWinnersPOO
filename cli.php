@@ -66,7 +66,7 @@ switch ($command) {
         break;
 
 
-    case 'test:env':
+    case 'test:.env.prod.prod':
         echo "App: " . App::getAppName() . "\n";
         echo "Env : " . (App::isDevMode() ? 'dev' : 'prod') . "\n";
         break;
@@ -78,6 +78,6 @@ switch ($command) {
         echo " - db:test        Teste la connexion à la DB\n";
         echo " - user:create    Crée un utilisateur\n";
         echo " - route:list     Affiche les routes connues\n";
-        echo " - test:env       Affiche l'environnement\n";
+        echo " - test:.env.prod.prod       Affiche l'environnement\n";
         exit(1);
 }

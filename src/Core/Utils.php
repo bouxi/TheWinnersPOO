@@ -52,4 +52,26 @@ class Utils
         header("Location: $finalUrl");
         exit;
     }
+
+    public static function flashSuccess(string $message): void {
+        $_SESSION['flash_success'] = $message;
+    }
+
+    public static function flashError(string $message): void {
+        $_SESSION['flash_error'] = $message;
+    }
+
+    public static function getFlashSuccess(): ?string {
+        if (!isset($_SESSION['flash_success'])) return null;
+        $msg = $_SESSION['flash_success'];
+        unset($_SESSION['flash_success']);
+        return $msg;
+    }
+
+    public static function getFlashError(): ?string {
+        if (!isset($_SESSION['flash_error'])) return null;
+        $msg = $_SESSION['flash_error'];
+        unset($_SESSION['flash_error']);
+        return $msg;
+    }
 }

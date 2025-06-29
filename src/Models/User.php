@@ -78,16 +78,18 @@ class User
     public function toArray(): array
     {
         return [
-            'id'            => $this->id,
-            'username'      => $this->username,
-            'email'         => $this->email,
-            'password'      => $this->password, // Attention : reste hashé !
-            'birthdate'     => $this->birthdate,
-            'avatar'        => $this->avatar,
-            'role'          => $this->role,
-            'date_inscription' => $this->date_inscription,
+            'id'                => $this->id,
+            'username'          => $this->username,
+            'email'             => $this->email,
+            'password'          => $this->password,
+            'birthdate'         => $this->birthdate,
+            'avatar'            => $this->avatar,
+            'role'              => $this->role,
+            'date_inscription'  => $this->dateInscription, // ✅ camelCase correct ici
         ];
     }
+
+
 
     /**
      * Crée un objet User à partir d’un tableau (ex: depuis la session)

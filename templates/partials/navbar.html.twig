@@ -2,8 +2,8 @@
     <div class="container-fluid">
 
         {# Logo + Nom #}
-        <a class="navbar-brand d-flex align-items-center" href="{{ base_path }}/">
-            <img src="{{ asset('assets/images/icons8-world-of-warcraft-48.png') }}"
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <img src="{{ asset('../assets/images/icons8-world-of-warcraft-48.png') }}"
                  alt="TheWinners"
                  width="46" height="46"
                  class="me-2">
@@ -28,7 +28,7 @@
             {# Avatar + nom utilisateur à droite #}
             {% if isAuthenticated %}
                 <div class="d-flex align-items-center me-3">
-                    <a href="{{ base_path }}/profile" class="text-white text-decoration-none me-2 fw-semibold">
+                    <a href="/profile" class="text-white text-decoration-none me-2 fw-semibold">
                         {{ user.username }}
                     </a>
                     <img src="{{ user.avatar ? '/uploads/avatars/' ~ user.avatar : '/assets/images/default-avatar.png' }}"
@@ -56,19 +56,25 @@
             <ul class="navbar-nav">
                 {% if isAuthenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ base_path }}/profile">Mon Profil</a>
+                        <a class="nav-link" href="/profile">Mon Profil</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ base_path }}/logout">Déconnexion</a>
+                        <a class="nav-link" href="/logout">Déconnexion</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ base_path }}/login">Connexion</a>
+                        <a class="nav-link" href="/login">Connexion</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ base_path }}/register">Inscription</a>
+                        <a class="nav-link" href="/register">Inscription</a>
                     </li>
                 {% endif %}
+                {% if app.user is defined and app.user.role in ['admin', 'guild_master'] %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">Admin</a>
+                    </li>
+                {% endif %}
+
             </ul>
         </div>
     </div>
@@ -76,21 +82,35 @@
 
 {% block javascripts %}
     <script>
+        lastCount = 0;
+
         function updateEnvelopeCount() {
             fetch('/messages/unread-count')
                 .then(res => res.json())
                 .then(data => {
                     const badge = document.getElementById('message-count');
+                    const count = parseInt(data.count);
                     if (badge) {
-                        badge.textContent = data.count;
-                        badge.style.display = (parseInt(data.count) === 0) ? 'none' : 'inline-block';
+                        badge.textContent = count;
+                        badge.style.display = (count === 0) ? 'none' : 'inline-block';
                     }
+
+                    if (count > lastCount) {
+                        // 🆕 Nouveau message !
+                        const sound = document.getElementById('messageSound');
+                        sound.play();
+
+
+                    }
+
+                    lastCount = count;
                 })
                 .catch(err => console.error("Erreur compteur navbar:", err));
         }
 
-        setInterval(updateEnvelopeCount, 10000); // toutes les 10 secondes
-        updateEnvelopeCount(); // au chargement
+        setInterval(updateEnvelopeCount, 10000);
+        updateEnvelopeCount();
+
     </script>
 
 

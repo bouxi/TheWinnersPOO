@@ -16,7 +16,11 @@ class View {
      * @throws LoaderError
      */
     public function render(string $template, array $data = []): void {
-        $twig = App::getTwig(); // On récupère Twig injecté via App::setTwig()
+        $twig = App::getTwig();
+
+        // Injection automatique de l'utilisateur connecté dans toutes les vues Twig
+        $data['app']['user'] = $_SESSION['user'] ?? null;
+
         echo $twig->render($template, $data);
     }
 }

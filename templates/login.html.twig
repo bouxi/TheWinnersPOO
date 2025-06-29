@@ -3,35 +3,36 @@
 {% block title %}Connexion - TheWinners{% endblock %}
 
 {% block content %}
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+    <div class="main">
+        <div class="row justify-content-center text-center">
             <h2 class="text-center mb-4">Connexion à votre compte</h2>
+            <div class="col-md-4">
+                {% if error %}
+                    <div class="alert alert-danger text-center">
+                        {{ error }}
+                    </div>
+                {% endif %}
 
-            {% if error %}
-                <div class="alert alert-danger text-center">
-                    {{ error }}
-                </div>
-            {% endif %}
+                <form method="post" action="/login" class="p-4 rounded shadow">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Nom d'utilisateur</label>
+                        <input type="text" id="username" name="username" class="form-control" required>
+                    </div>
 
-            <form method="post" action="/login" class="bg-secondary p-4 rounded shadow">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Nom d'utilisateur</label>
-                    <input type="text" id="username" name="username" class="form-control" required>
-                </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Mot de passe</label>
+                        <input type="password" id="password" name="password" class="form-control" required>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="password" class="form-label">Mot de passe</label>
-                    <input type="password" id="password" name="password" class="form-control" required>
-                </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-danger">Se connecter</button>
+                    </div>
+                </form>
 
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-danger">Se connecter</button>
-                </div>
-            </form>
-
-            <p class="text-center mt-3">
-                Pas encore membre ? <a href="/register" class="link-light">Inscription</a>
-            </p>
+                <p class="text-center mt-3">
+                    Pas encore membre ? <a href="/register" class="link-light">Inscription</a>
+                </p>
+            </div>
         </div>
     </div>
 {% endblock %}

@@ -4,6 +4,7 @@
 
 # Configurations sensibles
 .env
+.env.prod
 
 # Fichiers temporaires
 *.log

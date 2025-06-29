@@ -1,16 +1,20 @@
 <?php
+require __DIR__ . '/../vendor/autoload.php';
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
-require_once __DIR__ . '/../vendor/autoload.php';
 
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+
+
+
+use App\Core\Env;
 use App\Core\Bootstrap;
 use App\Core\Router;
 use App\Core\App;
 use App\Models\User;
-use App\Repositories\MessageRepository; // 🔥 ajoute ce use
+use App\Repositories\MessageRepository;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
@@ -20,6 +24,11 @@ use Twig\Extension\DebugExtension;
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// ⚙️ Chargement de l'environnement
+Env::load(); // charge les variables de ton fichier .env
+
+$env = Env::get('APP_ENV');
 
 // ⚙️ Boot de l'application
 Bootstrap::start();
@@ -42,25 +51,21 @@ if (isset($_SESSION['user']) && is_array($_SESSION['user'])) {
     $twig->addGlobal('user', $userObject);
     $twig->addGlobal('isAuthenticated', true);
 
-    // 🔴 Ajoute ça :
-    $unreadCount = (new \App\Repositories\MessageRepository())->findUnreadCountByUserId($userObject->getId());
-    $twig->addGlobal('unreadCount', $unreadCount);
-
-    // Ajout compteur de messages non lus
+    // 💬 Compteur de messages non lus
     $messageRepo = new MessageRepository();
-    $unreadCount = $messageRepo->findUnreadCountByUserId($userObject->getId());
-    $twig->addGlobal('unreadMessages', $unreadCount);
+    $unreadMessages = $messageRepo->findUnreadCountByUserId($userObject->getId());
+    $twig->addGlobal('unreadMessages', $unreadMessages);
 } else {
     $twig->addGlobal('isAuthenticated', false);
     $twig->addGlobal('unreadMessages', 0);
 }
 
-// 🛠️ Fonction asset()
+// 🛠️ Fonction asset() disponible dans Twig
 $twig->addFunction(new TwigFunction('asset', function ($path) {
     return App::getBasePath() . '/' . ltrim($path, '/');
 }));
 
-// 🗂️ Autres globals
+// 🌍 Variables globales supplémentaires
 $twig->addGlobal('app_name', App::getAppName());
 $twig->addGlobal('base_path', App::getBasePath());
 $twig->addGlobal('isDevMode', App::isDevMode());
@@ -69,3 +74,4 @@ $twig->addGlobal('isDevMode', App::isDevMode());
 $router = new Router();
 (require __DIR__ . '/../routes.php')($router);
 $router->handleRequest();
+

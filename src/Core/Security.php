@@ -47,6 +47,15 @@ class Security
         return $repo->findById($userId); // retourne un User ou null
     }
 
+    public static function requireRole(array $roles): void
+    {
+        if (!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], $roles)) {
+            http_response_code(403);
+            exit('⛔ Accès refusé');
+        }
+    }
+
+
     /**
      * Déconnecte proprement l'utilisateur
      */

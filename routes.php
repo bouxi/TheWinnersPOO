@@ -7,6 +7,8 @@ use App\Controllers\HomeController;
 use App\Controllers\ProfileController;
 use App\Controllers\TipsController;
 use App\Controllers\MessageController;
+use App\Core\Auth;
+use App\Controllers\AdminMessageController;
 use App\Core\Router;
 
 /**
@@ -17,7 +19,10 @@ use App\Core\Router;
  */
 return function (Router $router): void {
 
-    // Authentification
+    // Constante locale pour protection admin
+    $requireAdmin = fn() => \App\Core\Auth::requireRole(['admin', 'guild_master']);
+
+    // --- Authentification ---
     $router->addRoute('GET', '/', [new HomeController(), 'index']);
     $router->addRoute('GET', '/login', [new AuthController(), 'loginForm']);
     $router->addRoute('POST', '/login', [new AuthController(), 'login']);
@@ -25,12 +30,12 @@ return function (Router $router): void {
     $router->addRoute('GET', '/register', [new AuthController(), 'registerForm']);
     $router->addRoute('POST', '/register', [new AuthController(), 'register']);
 
-    // Profil utilisateur
+    // --- Profil utilisateur ---
     $router->addRoute('GET', '/profile', [new ProfileController(), 'index']);
-    $router->addRoute('POST','/profile/update', [new ProfileController(), 'update']);
+    $router->addRoute('POST', '/profile/update', [new ProfileController(), 'update']);
     $router->addRoute('POST', '/profile/remove-avatar', [new ProfileController(), 'removeAvatar']);
 
-    // Messagerie instantanée
+    // --- Messagerie instantanée ---
     $router->addRoute('GET', '/messages', [new MessageController(), 'index']);
     $router->addRoute('GET', '/messages/new', [new MessageController(), 'create']);
     $router->addRoute('POST', '/messages/send', [new MessageController(), 'send']);
@@ -40,17 +45,60 @@ return function (Router $router): void {
     $router->addRoute('GET', '/messages/fetch', [new MessageController(), 'fetch']);
     $router->addRoute('GET', '/messages/unread-count', [new MessageController(), 'unreadCount']);
 
+    // --- Administration (protégée) ---
+    $router->addRoute('GET', '/admin', function () use ($requireAdmin) {
+        $requireAdmin();
+        (new AdminController())->dashboard();
+    });
 
-    // Administration
-    $router->addRoute('GET', '/admin', [new AdminController(), 'dashboard']);
-    $router->addRoute('GET', '/admin/users', [new AdminUserController(), 'index']);
-    $router->addRoute('GET', '/admin/users/create', [new AdminUserController(), 'create']);
-    $router->addRoute('POST', '/admin/users/store', [new AdminUserController(), 'store']);
-    $router->addRoute('GET', '/admin/users/edit/{id}', [new AdminUserController(), 'edit']);
-    $router->addRoute('POST', '/admin/users/update/{id}', [new AdminUserController(), 'update']);
-    $router->addRoute('POST', '/admin/users/delete/{id}', [new AdminUserController(), 'delete']);
+    $router->addRoute('GET', '/admin/users', function () use ($requireAdmin) {
+        $requireAdmin();
+        (new AdminUserController())->index();
+    });
 
-    // Tips
+    $router->addRoute('GET', '/admin/users/create', function () use ($requireAdmin) {
+        $requireAdmin();
+        (new AdminUserController())->create();
+    });
+
+    $router->addRoute('POST', '/admin/users/store', function () use ($requireAdmin) {
+        $requireAdmin();
+        (new AdminUserController())->store();
+    });
+
+    $router->addRoute('GET', '/admin/users/edit/{id}', function ($id) use ($requireAdmin) {
+        $requireAdmin();
+        (new AdminUserController())->edit($id);
+    });
+
+    $router->addRoute('POST', '/admin/users/update/{id}', function ($id) use ($requireAdmin) {
+        $requireAdmin();
+        (new AdminUserController())->update($id);
+    });
+
+    $router->addRoute('POST', '/admin/users/delete/{id}', function ($id) use ($requireAdmin) {
+        $requireAdmin();
+        (new AdminUserController())->delete($id);
+    });
+
+    // Gestion des messages (admin)
+    $router->addRoute('GET', '/admin/messages', function () use ($requireAdmin) {
+        $requireAdmin();
+        (new AdminMessageController())->index();
+    });
+
+    $router->addRoute('POST', '/admin/messages/delete/{id}', function ($id) use ($requireAdmin) {
+        $requireAdmin();
+        (new AdminMessageController())->delete($id);
+    });
+
+    $router->addRoute('GET', '/admin/messages/view/{id}', function ($id) use ($requireAdmin) {
+        $requireAdmin();
+        (new \App\Controllers\AdminMessageController())->view($id);
+    });
+
+
+    // --- Conseils / Astuces ---
     $router->addRoute('GET', '/tips/add', [new TipsController(), 'addForm']);
     $router->addRoute('POST', '/tips/add', [new TipsController(), 'add']);
     $router->addRoute('GET', '/tips', [new TipsController(), 'index']);

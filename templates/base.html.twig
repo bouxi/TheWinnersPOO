@@ -10,18 +10,78 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- Ton CSS perso -->
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('../assets/css/style.css') }}">
 </head>
 <body class="bg-dark text-light">
 
-    {% include 'partials/navbar.html.twig' %}
+{% include 'partials/navbar.html.twig' %}
 
-    <main class="container py-4">
-        {% block content %}{% endblock %}
-    </main>
+<!-- ✅ Conteneur pour notifications centrées -->
+<div id="notification-container"
+     class="position-fixed top-0 start-50 translate-middle-x mt-3"
+     style="z-index: 9999; max-width: 600px;">
+</div>
 
-    {# ✅ Bloc pour insérer du JS personnalisé dans chaque vue #}
-    {% block javascripts %}{% endblock %}
+<main class="container py-4">
+    {% block content %}
+        {% if success %}
+            <div class="alert alert-success text-center">
+                {{ success }}
+            </div>
+        {% endif %}
+
+        {% if error %}
+            <div class="alert alert-danger text-center">
+                {{ error }}
+            </div>
+        {% endif %}
+
+    {% endblock %}
+</main>
+
+<audio id="messageSound" src="{{ asset('../assets/sounds/notification.mp3') }}" preload="auto"></audio>
+
+{% block javascripts %}
+    <script>
+        let lastCount = 0;
+
+        function updateEnvelopeCount() {
+            fetch('/messages/unread-count')
+                .then(res => res.json())
+                .then(data => {
+                    const badge = document.getElementById('message-count');
+                    const count = parseInt(data.count);
+                    if (badge) {
+                        badge.textContent = count;
+                        badge.style.display = (count === 0) ? 'none' : 'inline-block';
+                    }
+
+                    if (count > lastCount) {
+                        // 🔔 Nouveau message
+                        const sound = document.getElementById('messageSound');
+                        sound.play();
+
+                        // ✅ Affiche l'alerte centrée
+                        const toast = document.createElement('div');
+                        toast.className = 'alert alert-info shadow';
+                        toast.innerHTML = `<strong>Nouveau message !</strong> Vous avez ${count} message(s) non lu(s).`;
+
+                        const container = document.getElementById('notification-container');
+                        container.appendChild(toast);
+
+                        // 🔄 Disparition automatique
+                        setTimeout(() => toast.remove(), 5000);
+                    }
+
+                    lastCount = count;
+                })
+                .catch(err => console.error("Erreur compteur navbar:", err));
+        }
+
+        updateEnvelopeCount();
+        setInterval(updateEnvelopeCount, 5000);
+    </script>
+{% endblock %}
 
 </body>
 </html>

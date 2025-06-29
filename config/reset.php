@@ -3,7 +3,7 @@ Database::reset(); // Réinitialise l'ancienne connexion
 $pdo = Database::getConnection(); // Etablie une nouvelle
 // php cli.php db:reset
 /*
-php cli.php test:env
+php cli.php test:.env.prod.prod
 # → App: TheWinners
 # → Env : dev
 

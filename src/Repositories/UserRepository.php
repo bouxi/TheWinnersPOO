@@ -124,6 +124,38 @@ class UserRepository
         return $users;
     }
 
+    // Retourne le nombre total d’utilisateurs
+    public function getTotalUsers(): int {
+        $stmt = $this->db->query("SELECT COUNT(*) FROM users");
+        return (int) $stmt->fetchColumn();
+    }
+
+// Retourne un tableau associatif [role => count]
+    public function getUsersByRole(): array {
+        $stmt = $this->db->query("SELECT role, COUNT(*) as count FROM users GROUP BY role");
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $roles = [];
+        foreach ($results as $row) {
+            $roles[$row['role']] = (int) $row['count'];
+        }
+
+        return $roles;
+    }
+
+// Retourne les derniers utilisateurs inscrits
+    public function getLatestUsers(int $limit = 5): array {
+        $stmt = $this->db->prepare("SELECT * FROM users ORDER BY date_inscription DESC LIMIT :limit");
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $users = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $users[] = $this->mapToUser($row);
+        }
+
+        return $users;
+    }
 
 
 }
