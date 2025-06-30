@@ -1,0 +1,33 @@
+{% extends 'admin/admin_base.html.twig' %}
+
+{% block title %}Modifier utilisateur{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2>Modifier l’utilisateur : {{ user.username }}</h2>
+
+        <form method="post" action="{{ base_path }}/admin/users/{{ user.id }}/update" class="mt-4">
+            <div class="mb-3">
+                <label class="form-label">Nom</label>
+                <input type="text" class="form-control" value="{{ user.username }}" disabled>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" value="{{ user.email }}" disabled>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Rôle</label>
+                <select name="role" class="form-select">
+                    {% for role in ['admin', 'guild_master', 'officier', 'veteran', 'membre', 'recrue', 'visiteur', 'postulant'] %}
+                        <option value="{{ role }}" {% if role == user.role %}selected{% endif %}>{{ role }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success">✅ Enregistrer</button>
+            <a href="{{ base_path }}/admin/users" class="btn btn-secondary">↩️ Retour</a>
+        </form>
+    </div>
+{% endblock %}

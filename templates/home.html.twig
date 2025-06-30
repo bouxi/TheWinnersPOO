@@ -4,30 +4,28 @@
 
 {% block content %}
 
-    <div class="main">
+    <div class="main text-center">
         <div class="section">
-            <div class="container text-center mt-5">
+            <div class="mt-1">
                 <h2>Bienvenue sur le site de la guilde TheWinners</h2>
                 <p>Héberger sur le serveur privé World Of Warcraft <a href="www.way-of-elendil.fr" target="_blank" title="Visiter le site des Way-of-elendil">Way-of-elendil</a> côté<div style="color:red">horde</div></p>
                 {% if isAuthenticated %}
-                    <p>Bienvenue, <strong>{{ username }}</strong> !</p>
+                    <p>Bienvenue, <strong>{{ user.username }}</strong> !</p>
                 {% else %}
                     <p>Bienvenue, chère <strong>invité(e)</strong> !</p>
                 {% endif %}
 
             </div>
 
-
-
-            <div class="container mt-4">
+            <div class="container mt-2">
                 <h3>À propos de la guilde</h3>
                 <p>
                     Bienvenue sur le site officiel de la guilde <strong>TheWinners</strong>. Ici, vous trouverez toutes les informations sur la guilde, les dernières actualités,
-                    les événements à venir et bien plus encore !
+                    des guides très utile, les événements à venir et bien plus encore !
                 </p>
             </div>
 
-            <div class="container mt-4">
+            <div class="container mt-2">
                 <h3>Nos valeurs</h3>
                 <ul>
                     <li>Esprit d'équipe</li>
@@ -37,11 +35,11 @@
                 </ul>
             </div>
 
-            <div class="container mt-4">
+            <div class="container mt-2">
                 <h3>Rejoignez-nous !</h3>
                 <p>Envie de faire partie de l'aventure ? Rejoignez-nous et participez aux activités de la guilde !</p>
                 {% if not user.username %}
-                    <a href="/login" class="btn btn-success">Se connecter</a>
+                    <a href="{{ base_path }}/login" class="btn btn-primary">Se connecter</a>
                 {% endif %}
             </div>
         </div>

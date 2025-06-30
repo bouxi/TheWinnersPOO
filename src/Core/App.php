@@ -105,4 +105,8 @@ class App
         return self::get('DB')['password'];
     }
 
+    public static function getBaseUrl(): string {
+        return $_ENV['APP_URL'] ?? 'http://localhost';
+    }
+
 }

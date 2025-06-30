@@ -3,17 +3,20 @@
 {% block title %}Mes messages{% endblock %}
 
 {% block content %}
-    <div class="row justify-content-center text-center">
-        <div class="col-md-6 col-lg-6">
-            <h2>📥 Mes messages</h2>
+    <div class="main">
+        <div class="row justify-content-center text-center">
+            <div class="col-md-6 col-lg-6">
+                <h2>📥 Mes messages</h2>
 
-            <div id="messages-container">
-                {% include 'messages/_messages.html.twig' with { messages: messages } %}
+                <div id="messages-container">
+                    {% include 'messages/_messages.html.twig' with { messages: messages } %}
+                </div>
+
+                <a href="{{ base_path }}/messages/new" class="btn btn-primary mt-3">Nouveau message</a>
             </div>
-
-            <a href="{{ base_path }}/messages/new" class="btn btn-primary mt-3">Nouveau message</a>
         </div>
     </div>
+
 
     {# 🔽 Modale de réponse rapide #}
     <div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">

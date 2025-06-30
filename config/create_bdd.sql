@@ -40,5 +40,10 @@ CREATE TABLE messages (
     FOREIGN KEY (recipient_id) REFERENCES users(id)
 );
 
+# Pas encore mise en ligne.
+ALTER TABLE users
+    ADD COLUMN reset_token VARCHAR(255) DEFAULT NULL,
+    ADD COLUMN reset_token_expires_at DATETIME DEFAULT NULL;
+
 
 

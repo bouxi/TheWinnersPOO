@@ -9,3 +9,5 @@
 # Fichiers temporaires
 *.log
 *.cache
+
+/config/

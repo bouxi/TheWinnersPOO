@@ -4,97 +4,98 @@
 
 {% block content %}
     <div class="main-profile">
-        <div class="text-center">
-            <div class="">
-                <h2 class="mb-4">Profil de {{ user.username }}</h2>
+        <h2 class="text-center mb-4">Profil de {{ user.username }}</h2>
 
-                <form method="post" id="formulaire-profile" action="{{ base_path }}/profile/update" enctype="multipart/form-data" class="p-4">
+        <form method="post" action="{{ base_path }}/profile/update" enctype="multipart/form-data" class="formulaire-profile">
 
-                    <!-- Ligne 1 -->
-                    <div>
-                        <label>Nom d'utilisateur</label>
-                        <input type="text" class="form-control" value="{{ user.username }}" disabled>
-                    </div>
-
-                    <div>
-                        <label>Adresse e-mail</label>
-                        <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
-                    </div>
-
-                    <!-- Ligne 2 -->
-                    <div>
-                        <label>Date de naissance</label>
-                        <input type="date" name="birthdate" class="form-control" value="{{ user.birthdate }}">
-                    </div>
-
-                    <div>
-                        <label>Changer l'avatar</label>
-                        <input type="file" name="avatar" class="form-control" accept="image/*">
-                    </div>
-
-                    <!-- Avatar Preview (pleine largeur) -->
-                    <div class="full-width text-center">
-                        <img id="avatarPreview"
-                             src="{{ user.avatar ? base_path ~ '/uploads/avatars/' ~ user.avatar : base_path ~ '/assets/images/default-avatar.png' }}"
-                             alt="Avatar"
-                             class="rounded-circle shadow"
-                             width="100" height="100">
-                    </div>
-
-                    <!-- Suppression avatar -->
-                    {% if user.avatar %}
-                        <div class="full-width text-center">
-                            <label><input type="checkbox" name="delete_avatar" value="1"> Supprimer avatar actuel</label>
-                        </div>
-                    {% endif %}
-
-                    <hr class="full-width">
-
-                    <!-- Mot de passe -->
-                    <div>
-                        <label>Nouveau mot de passe</label>
-                        <input type="password" name="password" class="form-control">
-                    </div>
-
-                    <div>
-                        <label>Mot de passe actuel</label>
-                        <input type="password" name="current_password" class="form-control" required>
-                    </div>
-
-                    <div class="full-width d-grid">
-                        <button type="submit" class="btn btn-danger">Mettre à jour</button>
-                    </div>
-                </form>
-
-
-
-
-
-
-                <div class="text-center mt-4">
-                    <span class="badge bg-light text-dark">Rôle actuel : <strong>{{ user.role }}</strong></span>
-                </div>
-
-                {% if user.isGuildMaster %}
-                    <div class="text-center mt-3">
-                        <span class="badge bg-warning text-dark">Maître de Guilde 👑</span>
-                    </div>
-                {% endif %}
+            <!-- Ligne 1 -->
+            <div>
+                <label>Nom d'utilisateur</label>
+                <input type="text" class="form-control" value="{{ user.username }}" disabled>
             </div>
+
+            <div>
+                <label>Adresse e-mail</label>
+                <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+            </div>
+
+            <!-- Ligne 2 -->
+            <div>
+                <label>Date de naissance</label>
+                <input type="date" name="birthdate" class="form-control" value="{{ user.birthdate }}">
+            </div>
+
+            <div>
+                <label>Changer l'avatar</label>
+                <input type="file" id="avatar" name="avatar" class="form-control" accept="image/*">
+            </div>
+
+            <!-- Avatar Preview -->
+            <div class="full-width">
+                <img id="avatarPreview"
+                     src="{{ user.avatar ? base_path ~ '/uploads/avatars/' ~ user.avatar : base_path ~ '/assets/images/default-avatar.png' }}"
+                     alt="Avatar"
+                     class="rounded-circle shadow"
+                     width="100" height="100">
+            </div>
+
+            <!-- Suppression avatar -->
+            {% if user.avatar %}
+                <div class="full-width">
+                    <label><input type="checkbox" name="delete_avatar" value="1"> Supprimer avatar actuel</label>
+                </div>
+            {% endif %}
+
+            <hr class="full-width">
+
+            <!-- Ligne mot de passe -->
+            <div class="mb-3">
+                <label>Nouveau mot de passe</label>
+                <input type="password" name="new_password" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label>Confirmer le mot de passe</label>
+                <input type="password" name="confirm_password" class="form-control">
+            </div>
+
+
+            <div>
+                <label>Mot de passe actuel</label>
+                <input type="password" name="current_password" class="form-control" required>
+            </div>
+
+            <!-- Bouton -->
+            <div class="full-width d-grid">
+                <button type="submit" class="btn btn-danger">Mettre à jour</button>
+            </div>
+        </form>
+
+        <!-- Infos rôle -->
+        <div class="text-center mt-4">
+            <span class="badge bg-light text-dark">Rôle actuel : <strong>{{ user.role }}</strong></span>
         </div>
+
+        {% if user.isGuildMaster %}
+            <div class="text-center mt-3">
+                <span class="badge bg-warning text-dark">Maître de Guilde 👑</span>
+            </div>
+        {% endif %}
     </div>
 
-
+    <!-- JS pour l'aperçu de l'avatar -->
     <script>
         const avatarInput = document.getElementById('avatar');
         const avatarPreview = document.getElementById('avatarPreview');
 
-        avatarInput.addEventListener('change', function () {
-            const file = this.files[0];
-            if (file) {
-                const url = URL.createObjectURL(file);
-                avatarPreview.src = url;
-            }
-        });
+        if (avatarInput) {
+            avatarInput.addEventListener('change', function () {
+                const file = this.files[0];
+                if (file) {
+                    const url = URL.createObjectURL(file);
+                    avatarPreview.src = url;
+                }
+            });
+        }
     </script>
 {% endblock %}

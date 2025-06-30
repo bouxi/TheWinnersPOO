@@ -7,7 +7,13 @@ require __DIR__ . '/../vendor/autoload.php';
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
+// ✅ Fixe le fuseau horaire pour tout PHP (avant toute création de date)
+date_default_timezone_set('Europe/Brussels');
+    /*
+     * ini_set('log_errors', 1);
+       ini_set('error_log', __DIR__ . '/../var/log/php_errors.log');
 
+     */
 
 use App\Core\Env;
 use App\Core\Bootstrap;

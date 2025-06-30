@@ -1,6 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar">
     <div class="container-fluid">
-
         {# Logo + Nom #}
         <a class="navbar-brand d-flex align-items-center" href="/">
             <img src="{{ asset('../assets/images/icons8-world-of-warcraft-48.png') }}"
@@ -9,7 +8,6 @@
                  class="me-2">
             <span class="fw-bold">TheWinners</span>
         </a>
-
         {# Bouton pour le menu mobile #}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarNavDropdown"
@@ -23,6 +21,7 @@
         <div class="collapse navbar-collapse justify-content-between" id="navbarNavDropdown">
             <ul class="navbar-nav me-auto">
                 {# Liens principaux (gauche ou vide ici) #}
+
             </ul>
 
             {# Avatar + nom utilisateur à droite #}
@@ -47,16 +46,13 @@
                         {% endif %}
                     </a>
                 {% endif %}
-
-
-
-
             {% endif %}
+
 
             <ul class="navbar-nav">
                 {% if isAuthenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ base_path }}profile">Mon Profil</a>
+                        <a class="nav-link" href="{{ base_path }}/profile">Mon Profil</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ base_path }}/logout">Déconnexion</a>

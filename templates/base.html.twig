@@ -9,36 +9,81 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-
     <!-- Ton CSS perso -->
+    <link rel="stylesheet" href="/assets/css/style.css?v={{ "now"|date("U") }}">
     <link rel="stylesheet" href="{{ asset('../assets/css/style.css') }}">
 </head>
 <body class="bg-dark text-light">
 
+{# Navbar classique en haut (optionnelle si tu veux la garder) #}
 {% include 'partials/navbar.html.twig' %}
 
-<!-- ✅ Conteneur pour notifications centrées -->
-<div id="notification-container"
-     class="position-fixed top-0 start-50 translate-middle-x mt-3"
-     style="z-index: 9999; max-width: 600px;">
+<!-- ✅ SIDEBAR + CONTENU -->
+<div class="d-flex">
+    <!-- 📌 SIDEBAR GAUCHE -->
+    <nav class="bg-dark text-center text-white p-4 vh-100" style="width: 250px;">
+        <ul class="nav flex-column">
+            <h4>Nos guides</h4>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white" href="{{ base_path }}/en-travaux">
+                    Guides des classes
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white" href="{{ base_path }}/en-travaux">
+                    Raids
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white" href="{{ base_path }}/en-travaux">
+                    Donjons
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white" href="{{ base_path }}/en-travaux">
+                    Metiers
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white" href="{{ base_path }}/en-travaux">
+                    Addons
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white" href="{{ base_path }}/en-travaux">
+                    Leveling
+                </a>
+            </li>
+            <li class="nav-item mt-4">
+                <a class="nav-link text-danger" href="{{ base_path }}/logout">
+                    🚪 Déconnexion
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- 🔸 CONTENU PRINCIPAL -->
+    <main class="flex-grow-1 p-4">
+        <div id="notification-container"
+             class="position-fixed top-0 start-50 translate-middle-x mt-3"
+             style="z-index: 9999; max-width: 600px;">
+        </div>
+
+        {% block content %}
+            {% if success %}
+                <div class="alert alert-success text-center">
+                    {{ success }}
+                </div>
+            {% endif %}
+
+            {% if error %}
+                <div class="alert alert-danger text-center">
+                    {{ error }}
+                </div>
+            {% endif %}
+        {% endblock %}
+    </main>
 </div>
-
-<main class="container py-4">
-    {% block content %}
-        {% if success %}
-            <div class="alert alert-success text-center">
-                {{ success }}
-            </div>
-        {% endif %}
-
-        {% if error %}
-            <div class="alert alert-danger text-center">
-                {{ error }}
-            </div>
-        {% endif %}
-
-    {% endblock %}
-</main>
 
 <audio id="messageSound" src="{{ asset('../assets/sounds/notification.mp3') }}" preload="auto"></audio>
 
@@ -58,19 +103,15 @@
                     }
 
                     if (count > lastCount) {
-                        // 🔔 Nouveau message
                         const sound = document.getElementById('messageSound');
                         sound.play();
 
-                        // ✅ Affiche l'alerte centrée
                         const toast = document.createElement('div');
                         toast.className = 'alert alert-info shadow';
                         toast.innerHTML = `<strong>Nouveau message !</strong> Vous avez ${count} message(s) non lu(s).`;
 
                         const container = document.getElementById('notification-container');
                         container.appendChild(toast);
-
-                        // 🔄 Disparition automatique
                         setTimeout(() => toast.remove(), 5000);
                     }
 
@@ -84,5 +125,6 @@
     </script>
 {% endblock %}
 
+{% include 'partials/footer.html.twig' %}
 </body>
 </html>

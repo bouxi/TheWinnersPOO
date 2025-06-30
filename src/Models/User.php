@@ -13,12 +13,15 @@ class User
     private ?string $dateInscription = null;
     private ?string $avatar = null;
     private bool $isHashed;
+    private ?string $resetToken = null;
+    private ?string $resetTokenExpiresAt = null;
+
 
     public function __construct(
         string $username,
         string $email,
         string $password,
-        string $role = 'member',
+        string $role = 'visitor',
         bool $isHashed = false,
         ?int $id = null
     ) {
@@ -41,9 +44,16 @@ class User
     public function setEmail(string $email): void { $this->email = $email; }
 
     public function getPassword(): string { return $this->password; }
-    public function setPassword(string $password): void {
-        $this->password = password_hash($password, PASSWORD_DEFAULT);
+    public function setPassword(string $password): void
+    {
+        // Vérifie si le mot de passe est déjà hashé
+        if (!password_get_info($password)['algo']) {
+            $password = password_hash($password, PASSWORD_DEFAULT);
+        }
+
+        $this->password = $password;
     }
+
 
     public function verifyPassword(string $plain): bool {
         return password_verify($plain, $this->password);
@@ -112,6 +122,27 @@ class User
         $user->setDateInscription($data['date_inscription'] ?? null);
 
         return $user;
+    }
+
+    // Reset mots de passe
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): void
+    {
+        $this->resetToken = $resetToken;
+    }
+
+    public function getResetTokenExpiresAt(): ?string
+    {
+        return $this->resetTokenExpiresAt;
+    }
+
+    public function setResetTokenExpiresAt(?string $resetTokenExpiresAt): void
+    {
+        $this->resetTokenExpiresAt = $resetTokenExpiresAt;
     }
 
 

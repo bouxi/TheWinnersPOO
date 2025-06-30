@@ -1,0 +1,41 @@
+{% extends 'admin/admin_base.html.twig' %}
+
+{% block title %}Gestion des utilisateurs{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2>Liste des utilisateurs</h2>
+
+        <table class="table table-dark table-bordered mt-3">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Rôle</th>
+                <th>Date d'inscription</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>{{ user.dateInscription|date('d/m/Y') }}</td>
+                    <td>
+                        <a href="{{ base_path }}/admin/users/{{ user.id }}/edit" class="btn btn-sm btn-warning">✏️ Modifier</a>
+                        <a href="{{ base_path }}/admin/users/{{ user.id }}/delete" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cet utilisateur ?')">🗑️ Supprimer</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6" class="text-center">Aucun utilisateur trouvé.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

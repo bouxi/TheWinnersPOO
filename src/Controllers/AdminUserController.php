@@ -7,102 +7,68 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Views\View;
 
-class AdminUserController {
-
-    public function index(): void {
-        Auth::requireRole(['admin', 'guild_master']);
-        $userRepo = new UserRepository();
-        $users = $userRepo->getAllUsers();
-
-        $view = new View();
-        $view->render('admin/users.html.twig', ['users' => $users]);
-    }
-
-    public function create(): void {
-        Auth::requireRole(['admin', 'guild_master']);
-        $view = new View();
-        $view->render('admin/create_user.html.twig');
-    }
-
-    public function store(): void {
-        Auth::requireRole(['admin', 'guild_master']);
-        $username = $_POST['username'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
-        $role = $_POST['role'] ?? 'member';
-
-        $userRepo = new UserRepository();
-        $user = new User($username, $email, $password, $role);
-        $userRepo->save($user);
-
-        header('Location: /admin/users');
-        exit;
-    }
-
-    public function delete(int $id): void {
+class AdminUserController
+{
+    public function index(): void
+    {
         Auth::requireRole(['admin', 'guild_master']);
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $userRepo = new UserRepository();
-            $userRepo->delete($id);
+        $repo = new UserRepository();
+        $users = $repo->findAll();
 
-            header('Location: /admin/users');
-            exit;
-        } else {
-            echo "Méthode non autorisée.";
-        }
-    }
-
-
-    public function edit(int $id): void {
-        Auth::requireRole(['admin', 'guild_master']);
-
-        $userRepo = new UserRepository();
-        $user = $userRepo->findById($id);
-
-        if (!$user) {
-            echo "Utilisateur non trouvé.";
-            return;
-        }
-
-        $view = new View();
-        $view->render('admin/edit_user.html.twig', [
-            'id' => $user->getId(),
-            'username' => $user->getUsername(),
-            'email' => $user->getEmail(),
-            'role' => $user->getRole()
+        (new View())->render('admin/users/index.html.twig', [
+            'users' => $users
         ]);
     }
 
-    public function update(int $id): void {
+    public function edit(int $id): void
+    {
         Auth::requireRole(['admin', 'guild_master']);
 
-        $username = $_POST['username'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
-        $role = $_POST['role'] ?? 'member';
+        $repo = new UserRepository();
+        $user = $repo->findById($id);
 
-        $userRepo = new UserRepository();
-        $user = $userRepo->findById($id);
-
-        if ($user) {
-            $user->setUsername($username);
-            $user->setEmail($email);
-
-            if (!empty($password)) {
-                $user->setPassword($password);
-            }
-
-            $user->setRole($role);
-
-            if ($userRepo->update($user)) {
-                header('Location: /admin/users');
-                exit;
-            } else {
-                echo "Erreur lors de la mise à jour.";
-            }
-        } else {
-            echo "Utilisateur non trouvé.";
+        if (!$user) {
+            http_response_code(404);
+            echo "Utilisateur introuvable";
+            return;
         }
+
+        (new View())->render('admin/users/edit.html.twig', [
+            'user' => $user
+        ]);
+    }
+
+    public function update(int $id): void
+    {
+        Auth::requireRole(['admin', 'guild_master']);
+
+        $repo = new UserRepository();
+        $user = $repo->findById($id);
+
+        if (!$user) {
+            http_response_code(404);
+            echo "Utilisateur introuvable";
+            return;
+        }
+
+        $newRole = $_POST['role'] ?? null;
+
+        if (in_array($newRole, ['admin', 'guild_master', 'officier', 'veteran', 'membre', 'recrue', 'visitor', 'postulant'])) {
+            $user->setRole($newRole);
+            $repo->update($user);
+            header("Location: /admin/users");
+        } else {
+            echo "Rôle non valide";
+        }
+    }
+
+    public function delete(int $id): void
+    {
+        Auth::requireRole(['admin', 'guild_master']);
+
+        $repo = new UserRepository();
+        $repo->delete($id);
+        header("Location: /admin/users");
     }
 }

@@ -1,38 +1,51 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/admin_base.html.twig' %}
 
 {% block title %}Modifier l'utilisateur{% endblock %}
 
 {% block content %}
-    <h2>Modifier l'utilisateur</h2>
+    <div class="container my-5 d-flex justify-content-center">
+        <form action="{{ base_path }}/admin/users/update/{{ id }}" method="post"
+              class="bg-dark border border-secondary rounded p-4 shadow-lg w-100" style="max-width: 600px;">
 
-    <form action="/admin/users/update/{{ id }}" method="post">
-        <div class="mb-3">
-            <label for="username" class="form-label">Nom d'utilisateur</label>
-            <input type="text" class="form-control" name="username" value="{{ username }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" name="email" value="{{ email }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Nouveau mot de passe (laisser vide pour ne pas changer)</label>
-            <input type="password" class="form-control" name="password">
-        </div>
-        <div class="mb-3">
-            <label for="role" class="form-label">Rôle</label>
-            <select class="form-select" name="role">
-                <option value="admin" {% if role == 'admin' %}selected{% endif %}>Admin</option>
-                <option value="guild_master" {% if role == 'guild_master' %}selected{% endif %}>Maître de Guilde</option>
-                <option value="officer" {% if role == 'officer' %}selected{% endif %}>Officier</option>
-                <option value="veteran" {% if role == 'veteran' %}selected{% endif %}>Vétéran</option>
-                <option value="member" {% if role == 'member' %}selected{% endif %}>Membre</option>
-                <option value="recruit" {% if role == 'recruit' %}selected{% endif %}>Recrue</option>
-                <option value="visitor" {% if role == 'visitor' %}selected{% endif %}>Visiteur</option>
-                <option value="applicant" {% if role == 'applicant' %}selected{% endif %}>Postulant</option>
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Mettre à jour</button>
-    </form>
+            <h2 class="mb-4 text-center text-warning">🔧 Modifier l’utilisateur</h2>
 
-    <a href="/admin/users" class="btn btn-secondary mt-3">Retour</a>
+            <div class="mb-2">
+                <label for="username" class="form-label text-light">Nom d'utilisateur</label>
+                <input type="text" class="form-control form-control-sm bg-secondary text-light" name="username" value="{{ username }}" required>
+            </div>
+
+            <div class="mb-2">
+                <label for="email" class="form-label text-light">Adresse e-mail</label>
+                <input type="email" class="form-control form-control-sm bg-secondary text-light" name="email" value="{{ email }}" required>
+            </div>
+
+            <div class="mb-2">
+                <label for="password" class="form-label text-light">🔒 Nouveau mot de passe</label>
+                <input type="password" class="form-control form-control-sm bg-secondary text-light" name="password" placeholder="Laisser vide pour ne pas changer">
+            </div>
+
+            <div class="mb-3">
+                <label for="role" class="form-label text-light">Rôle</label>
+                <select class="form-select form-select-sm bg-secondary text-light" name="role">
+                    <option value="admin" {% if role == 'admin' %}selected{% endif %}>🛡️ Admin</option>
+                    <option value="guild_master" {% if role == 'guild_master' %}selected{% endif %}>👑 Maître de Guilde</option>
+                    <option value="officer" {% if role == 'officer' %}selected{% endif %}>⚔️ Officier</option>
+                    <option value="veteran" {% if role == 'veteran' %}selected{% endif %}>🎖️ Vétéran</option>
+                    <option value="member" {% if role == 'member' %}selected{% endif %}>🧙 Membre</option>
+                    <option value="recruit" {% if role == 'recruit' %}selected{% endif %}>🎯 Recrue</option>
+                    <option value="visitor" {% if role == 'visitor' %}selected{% endif %}>👀 Visiteur</option>
+                    <option value="applicant" {% if role == 'applicant' %}selected{% endif %}>📝 Postulant</option>
+                </select>
+            </div>
+
+            <div class="d-flex justify-content-between mt-3">
+                <button type="submit" class="btn btn-success btn-sm">
+                    ✅ Enregistrer
+                </button>
+                <a href="{{ base_path }}/admin/users" class="btn btn-secondary btn-sm">
+                    🔙 Retour
+                </a>
+            </div>
+        </form>
+    </div>
 {% endblock %}
