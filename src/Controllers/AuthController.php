@@ -34,6 +34,11 @@ class AuthController
                 'role'     => $user->getRole()
             ];
 
+
+            // ✅ Message flash facultatif ici
+            Utils::flashSuccess("Bienvenue " . $user->getUsername() . " !");
+
+            // ✅ Redirection vers profil (ou dashboard)
             Utils::redirect('/profile');
         } else {
             $view = new View();
@@ -106,7 +111,8 @@ class AuthController
 
         $userRepo->save($user);
 
-        Utils::redirectSuccess('/login', 'Inscription réussie ! Vous pouvez vous connecter.');
+        Utils::flashSuccess("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+        Utils::redirect('/login');
     }
 
 

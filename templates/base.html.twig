@@ -88,47 +88,50 @@
     </main>
 </div>
 
-<audio id="messageSound" src="{{ base_path }}../assets/sounds/notification.mp3" preload="auto"></audio>
+<!-- 🔊 Sonnerie message -->
+<audio id="messageSound" src="{{ base_path }}/assets/sounds/notification.mp3" preload="auto"></audio>
 
-{% block javascripts %}
-    <script>
-        let lastCount = 0;
+<!-- 🔌 Scripts JS globaux -->
+<script>
+    let lastCount = 0;
+    function updateEnvelopeCount() {
+        fetch('{{ base_path }}/messages/unread-count')
+            .then(res => res.json())
+            .then(data => {
+                const badge = document.getElementById('message-count');
+                const count = parseInt(data.count);
+                if (badge) {
+                    badge.textContent = count;
+                    badge.style.display = (count === 0) ? 'none' : 'inline-block';
+                }
 
-        function updateEnvelopeCount() {
-            fetch('/messages/unread-count')
-                .then(res => res.json())
-                .then(data => {
-                    const badge = document.getElementById('message-count');
-                    const count = parseInt(data.count);
-                    if (badge) {
-                        badge.textContent = count;
-                        badge.style.display = (count === 0) ? 'none' : 'inline-block';
-                    }
+                if (count > lastCount) {
+                    const sound = document.getElementById('messageSound');
+                    sound.play();
 
-                    if (count > lastCount) {
-                        const sound = document.getElementById('messageSound');
-                        sound.play();
+                    const toast = document.createElement('div');
+                    toast.className = 'alert alert-info shadow';
+                    toast.innerHTML = `<strong>Nouveau message !</strong> Vous avez ${count} message(s) non lu(s).`;
 
-                        const toast = document.createElement('div');
-                        toast.className = 'alert alert-info shadow';
-                        toast.innerHTML = `<strong>Nouveau message !</strong> Vous avez ${count} message(s) non lu(s).`;
+                    const container = document.getElementById('notification-container');
+                    container.appendChild(toast);
+                    setTimeout(() => toast.remove(), 5000);
+                }
 
-                        const container = document.getElementById('notification-container');
-                        container.appendChild(toast);
-                        setTimeout(() => toast.remove(), 5000);
-                    }
+                lastCount = count;
+            })
+            .catch(err => console.error("Erreur compteur navbar:", err));
+    }
 
-                    lastCount = count;
-                })
-                .catch(err => console.error("Erreur compteur navbar:", err));
-        }
+    updateEnvelopeCount();
+    setInterval(updateEnvelopeCount, 5000);
+</script>
 
-        updateEnvelopeCount();
-        setInterval(updateEnvelopeCount, 5000);
-    </script>
-    <script src="{{ base_path }}../assets/js/App.js"></script>
-{% endblock %}
+<!-- ✅ Chargement JS principal (App.js chargé sur toutes les pages) -->
+<script src="{{ base_path }}/assets/js/App.js"></script>
+{% block javascripts %}{% endblock %}
 
+<!-- 🦶 Pied de page -->
 {% include 'partials/footer.html.twig' %}
 
 </body>

@@ -49,8 +49,8 @@
                     <div class="col-md-6 d-flex flex-column">
                         <label for="password" class="form-label">Mot de passe</label>
                         <div class="password-wrapper">
-                            <input type="password" name="password" id="password" class="form-control" required>
-                            <button type="button" class="toggle-password" data-target="password">👁️</button>
+                            <input type="password" name="password" id="register_password" class="form-control" required>
+                            <button type="button" class="toggle-password" data-target="register_password">👁️</button>
                         </div>
 
                         {# ✅ Inclusion du composant des règles #}
@@ -67,7 +67,7 @@
                 </div>
 
                 <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-danger">Créer mon compte</button>
+                    <button type="submit" class="btn btn-danger" id="submit-button-register">Créer mon compte</button>
                     <p class="mt-3">Déjà inscrit ? <a href="{{ base_path }}/login" class="link-light">Se connecter</a></p>
                 </div>
             </form>
@@ -89,6 +89,8 @@
     </script>
 
     {# ✅ Inclusion du JS global de validation mot de passe #}
-    <script src="{{ base_path }}/assets/js/App.js"></script>
 
+    <script>
+        setupPasswordRules('register', 'register_password');
+    </script>
 {% endblock %}
