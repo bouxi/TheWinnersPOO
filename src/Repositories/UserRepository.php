@@ -312,7 +312,7 @@ class UserRepository
 
     public function updatePasswordAndClearToken(User $user): bool
     {
-        $stmt = $this->db->prepare("
+        $query = $this->db->prepare("
         UPDATE users 
         SET password = :password,
             reset_token = NULL,
@@ -320,11 +320,12 @@ class UserRepository
         WHERE id = :id
     ");
 
-        return $stmt->execute([
+        return $query->execute([
             'password' => $user->getPassword(),
-            'id' => $user->getId()
+            'id'       => $user->getId()
         ]);
     }
+
 
     public function setResetToken(int $userId, string $token, string $expiresAt): void {
         $stmt = $this->db->prepare("
