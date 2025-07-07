@@ -79,6 +79,14 @@
             </div>
         </form>
 
+        {% if user.role == 'visitor' %}
+            {% if not has_joined_guild %}
+                <div class="mt-4 text-center">
+                    <a href="{{ base_path }}/apply" class="btn btn-warning">🎯 Postuler pour rejoindre la guilde</a>
+                </div>
+            {% endif %}
+        {% endif %}
+
         <!-- Infos rôle -->
         <div class="text-center mt-4">
             <span class="badge bg-light text-dark">Rôle actuel : <strong>{{ user.role }}</strong></span>

@@ -30,7 +30,7 @@ class MessageRepository
         ]);
     }
 
-    // ✅ Lecture
+    // ✅ Lecture d’un message par ID
     public function findById(int $id): ?Message
     {
         $stmt = $this->db->prepare('SELECT * FROM messages WHERE id = :id');
@@ -40,6 +40,7 @@ class MessageRepository
         return $data ? $this->mapToMessage($data) : null;
     }
 
+    // ✅ Tous les messages reçus d’un utilisateur
     public function findAllByUserId(int $userId): array
     {
         $stmt = $this->db->prepare('SELECT * FROM messages WHERE recipient_id = :id ORDER BY created_at DESC');
@@ -61,35 +62,78 @@ class MessageRepository
         return (int)$stmt->fetchColumn();
     }
 
-    // ✅ Lecture enrichie pour l’admin (avec usernames)
-    public function findWithUsernamesById(int $id): ?array
+    public function delete(int $id): bool
     {
-        $sql = "
-            SELECT m.id, m.content, m.created_at, m.is_read,
-                   u1.username AS senderUsername,
-                   u2.username AS recipientUsername
-            FROM messages m
-            LEFT JOIN users u1 ON m.sender_id = u1.id
-            LEFT JOIN users u2 ON m.recipient_id = u2.id
-            WHERE m.id = :id
-        ";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['id' => $id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        $stmt = $this->db->prepare('DELETE FROM messages WHERE id = :id');
+        return $stmt->execute(['id' => $id]);
     }
 
-    public function findAllWithUsernames(): array
+    public function markAsRead(int $id): bool
     {
-        $sql = "
-            SELECT m.id, m.content, m.created_at, m.is_read,
-                   u1.username AS senderUsername,
-                   u2.username AS recipientUsername
-            FROM messages m
-            LEFT JOIN users u1 ON m.sender_id = u1.id
-            LEFT JOIN users u2 ON m.recipient_id = u2.id
-            ORDER BY m.created_at DESC
-        ";
-        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = $this->db->prepare('UPDATE messages SET is_read = 1 WHERE id = :id');
+        return $stmt->execute(['id' => $id]);
+    }
+
+    public function countAllUnreadMessages(): int
+    {
+        $stmt = $this->db->query("SELECT COUNT(*) FROM messages WHERE is_read = 0");
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function findAll(): array
+    {
+        $stmt = $this->db->query('SELECT * FROM messages ORDER BY created_at DESC');
+
+        $messages = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $messages[] = $this->mapToMessage($row);
+        }
+
+        return $messages;
+    }
+
+    // ✅ Hydratation : créer un objet Message avec un User (expéditeur complet)
+    private function mapToMessage(array $data): Message
+    {
+        $userRepo = new UserRepository();
+        $sender = $userRepo->findById((int)$data['sender_id']);
+
+        return new Message(
+            (int)$data['id'],
+            $sender,
+            (int)$data['recipient_id'],
+            $data['content'],
+            new \DateTime($data['created_at']),
+            (bool)$data['is_read'],
+        );
+    }
+
+    public function findPaginatedByUserId(int $userId, int $limit, int $offset): array
+    {
+        $stmt = $this->db->prepare("
+        SELECT * FROM messages
+        WHERE recipient_id = :id
+        ORDER BY created_at DESC
+        LIMIT :limit OFFSET :offset
+    ");
+        $stmt->bindValue(':id', $userId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $messages = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $messages[] = $this->mapToMessage($row);
+        }
+
+        return $messages;
+    }
+
+    public function countByUserId(int $userId): int
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM messages WHERE recipient_id = :id");
+        $stmt->execute(['id' => $userId]);
+        return (int) $stmt->fetchColumn();
     }
 
     public function findPaginatedWithSearch(int $limit, int $offset, ?string $search = null, string $sort = 'created_at', string $order = 'DESC'): array
@@ -101,13 +145,13 @@ class MessageRepository
         if (!in_array(strtoupper($order), $allowedOrders)) $order = 'DESC';
 
         $sql = "
-            SELECT m.id, m.content, m.created_at, m.is_read,
-                   u1.username AS senderUsername,
-                   u2.username AS recipientUsername
-            FROM messages m
-            LEFT JOIN users u1 ON m.sender_id = u1.id
-            LEFT JOIN users u2 ON m.recipient_id = u2.id
-        ";
+        SELECT m.id, m.content, m.created_at, m.is_read,
+               u1.username AS senderUsername,
+               u2.username AS recipientUsername
+        FROM messages m
+        LEFT JOIN users u1 ON m.sender_id = u1.id
+        LEFT JOIN users u2 ON m.recipient_id = u2.id
+    ";
 
         $params = [];
 
@@ -125,9 +169,9 @@ class MessageRepository
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 
         if ($search) {
-            $stmt->bindValue(':search1', $params[':search1'], PDO::PARAM_STR);
-            $stmt->bindValue(':search2', $params[':search2'], PDO::PARAM_STR);
-            $stmt->bindValue(':search3', $params[':search3'], PDO::PARAM_STR);
+            foreach ($params as $key => $val) {
+                $stmt->bindValue($key, $val, PDO::PARAM_STR);
+            }
         }
 
         $stmt->execute();
@@ -137,10 +181,10 @@ class MessageRepository
     public function countAllWithSearch(?string $search = null): int
     {
         $sql = "
-            SELECT COUNT(*) FROM messages m
-            LEFT JOIN users u1 ON m.sender_id = u1.id
-            LEFT JOIN users u2 ON m.recipient_id = u2.id
-        ";
+        SELECT COUNT(*) FROM messages m
+        LEFT JOIN users u1 ON m.sender_id = u1.id
+        LEFT JOIN users u2 ON m.recipient_id = u2.id
+    ";
 
         if ($search) {
             $sql .= " WHERE (m.content LIKE :search1 OR u1.username LIKE :search2 OR u2.username LIKE :search3) ";
@@ -156,53 +200,5 @@ class MessageRepository
         return (int) $stmt->fetchColumn();
     }
 
-    // ✅ Suppression
-    public function delete(int $id): bool
-    {
-        $stmt = $this->db->prepare('DELETE FROM messages WHERE id = :id');
-        return $stmt->execute(['id' => $id]);
-    }
 
-    // ✅ Marquer comme lu
-    public function markAsRead(int $id): bool
-    {
-        $stmt = $this->db->prepare('UPDATE messages SET is_read = 1 WHERE id = :id');
-        return $stmt->execute(['id' => $id]);
-    }
-
-    // ✅ Tous les messages (POO)
-    public function findAll(): array
-    {
-        $stmt = $this->db->query('SELECT * FROM messages ORDER BY created_at DESC');
-
-        $messages = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $messages[] = $this->mapToMessage($row);
-        }
-
-        return $messages;
-    }
-
-    // 🔴 Non lus (dashboard)
-    public function countAllUnreadMessages(): int
-    {
-        $stmt = $this->db->query("SELECT COUNT(*) FROM messages WHERE is_read = 0");
-        return (int) $stmt->fetchColumn();
-    }
-
-    // ✅ Hydratation
-    private function mapToMessage(array $data): Message
-    {
-        $userRepo = new UserRepository();
-        $sender = $userRepo->findById($data['sender_id']);
-
-        return new Message(
-            $data['id'],
-            $sender,
-            (int) $data['recipient_id'],
-            $data['content'],
-            new \DateTime($data['created_at']),
-            (bool) $data['is_read'],
-        );
-    }
 }

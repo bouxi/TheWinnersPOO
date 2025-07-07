@@ -52,4 +52,26 @@ class AdminMessageController {
         ]);
     }
 
+    public function messages(): void
+    {
+        Auth::requireRole(['admin', 'guild_master']);
+
+        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        $limit = 12;
+        $offset = ($page - 1) * $limit;
+
+        $repo = new MessageRepository();
+        $messages = $repo->findPaginatedWithSearch($limit, $offset);  // 🔍 tu peux rajouter $search si besoin
+        $total = $repo->countAllWithSearch(); // 🔍 idem, rajoute $search
+
+        $totalPages = ceil($total / $limit);
+
+        $view = new View();
+        $view->render('admin/messages.html.twig', [
+            'messages' => $messages,
+            'page' => $page,
+            'totalPages' => $totalPages
+        ]);
+    }
+
 }

@@ -3,28 +3,19 @@
 {% block title %}Message #{{ message.id }}{% endblock %}
 
 {% block content %}
-    <h2>📨 Message #{{ message.id }}</h2>
+    <h1 class="mb-4">👁 Lecture du message #{{ message.id }}</h1>
 
-    <ul class="list-group mb-4">
-        <li class="list-group-item bg-dark text-light">
-            <strong>Expéditeur :</strong> {{ message.senderUsername }}
-        </li>
-        <li class="list-group-item bg-dark text-light">
-            <strong>Destinataire :</strong> {{ message.recipientUsername }}
-        </li>
-        <li class="list-group-item bg-dark text-light">
-            <strong>Date :</strong> {{ message.created_at|date('d/m/Y H:i') }}
-        </li>
-        <li class="list-group-item bg-dark text-light">
-            <strong>Lu :</strong> {{ message.is_read ? 'Oui' : 'Non' }}
-        </li>
-    </ul>
-
-    <div class="card text-bg-secondary">
+    <div class="card bg-dark text-light mb-3">
+        <div class="card-header">
+            De : <strong>{{ message.senderUsername }}</strong><br>
+            À : <strong>{{ message.recipientUsername }}</strong><br>
+            Date : {{ message.created_at|date('d/m/Y H:i') }}<br>
+            Lu : {{ message.is_read ? 'Oui' : 'Non' }}
+        </div>
         <div class="card-body">
-            <p>{{ message.content|nl2br }}</p>
+            <p class="card-text">{{ message.content }}</p>
         </div>
     </div>
 
-    <a href="/admin/messages" class="btn btn-light mt-3">← Retour</a>
+    <a href="/admin/messages" class="btn btn-secondary">⬅ Retour à la liste</a>
 {% endblock %}

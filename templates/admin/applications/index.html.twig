@@ -1,0 +1,129 @@
+{% extends 'admin/admin_base.html.twig' %}
+
+{% block title %}Candidatures - Admin{% endblock %}
+
+{% block content %}
+    <h2 class="mb-4">📋 Liste des candidatures</h2>
+
+    {# ✅ Affichage des messages flash #}
+    {% if flash_success %}
+        <div class="alert alert-success text-center">{{ flash_success }}</div>
+    {% endif %}
+    {% if flash_error %}
+        <div class="alert alert-danger text-center">{{ flash_error }}</div>
+    {% endif %}
+
+    {# 🔍 Formulaire de filtre par statut #}
+    <form method="get" action="{{ base_path }}/admin/applications" class="mb-3">
+        <div class="input-group" style="max-width: 300px;">
+            <label class="input-group-text" for="status">Filtrer</label>
+            <select name="status" id="status" class="form-select" onchange="this.form.submit()">
+                <option value="">-- Tous --</option>
+                <option value="pending" {{ filter_status == 'pending' ? 'selected' : '' }}>En attente</option>
+                <option value="accepted" {{ filter_status == 'accepted' ? 'selected' : '' }}>Acceptées</option>
+                <option value="refused" {{ filter_status == 'refused' ? 'selected' : '' }}>Refusées</option>
+            </select>
+        </div>
+    </form>
+
+    {% if applications is empty %}
+        <p>Aucune candidature reçue pour le moment.</p>
+    {% else %}
+        <table class="table table-dark table-striped align-middle">
+            <thead>
+            <tr>
+                <th>Joueur</th>
+                <th>Classe</th>
+                <th>Spécialisation</th>
+                <th>Motivation</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for app in applications %}
+                <tr>
+                    <td>{{ app.username }}</td>
+                    <td>{{ app.class }}</td>
+                    <td>{{ app.specialization }}</td>
+                    <td>{{ app.motivation|length > 40 ? app.motivation|slice(0, 40) ~ '...' : app.motivation }}</td>
+                    <td>{{ app.submitted_at|date('d/m/Y H:i') }}</td>
+                    <td>
+                        {% if app.status == 'pending' %}
+                            <span class="badge bg-warning text-dark">En attente</span>
+                        {% elseif app.status == 'accepted' %}
+                            <span class="badge bg-success">Acceptée</span>
+                        {% elseif app.status == 'refused' %}
+                            <span class="badge bg-danger">Refusée</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {# 👁️ Bouton voir (modale) #}
+                        <a href="{{ base_path }}/admin/applications/{{ app.id }}" class="btn btn-sm btn-primary mb-1">
+                            Voir
+                        </a>
+
+
+                        {# ✔️ Accepter #}
+                        {% if app.status != 'accepted' %}
+                            <form method="post" action="{{ base_path }}/admin/applications/update-status" class="d-inline">
+                                <input type="hidden" name="id" value="{{ app.id }}">
+                                <input type="hidden" name="status" value="accepted">
+                                <button class="btn btn-success btn-sm" onclick="return confirm('Accepter cette candidature ?')">✔️</button>
+                            </form>
+                        {% endif %}
+
+                        {# ❌ Refuser #}
+                        {% if app.status != 'refused' %}
+                            <form method="post" action="{{ base_path }}/admin/applications/update-status" class="d-inline">
+                                <input type="hidden" name="id" value="{{ app.id }}">
+                                <input type="hidden" name="status" value="refused">
+                                <button class="btn btn-danger btn-sm" onclick="return confirm('Refuser cette candidature ?')">❌</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                {# 🧾 MODALE Bootstrap pour détails #}
+                <div class="modal fade" id="modal-{{ app.id }}" tabindex="-1" aria-labelledby="modalLabel-{{ app.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content bg-dark text-light">
+                            <div class="modal-header">
+                                <h5 class="modal-title">📄 Candidature de {{ app.username }}</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body text-start">
+                                <p><strong>Classe :</strong> {{ app.class }}</p>
+                                <p><strong>Spécialisation :</strong> {{ app.specialization }}</p>
+                                <p><strong>Temps de jeu :</strong> {{ app.playtime }}</p>
+                                <p><strong>Motivation :</strong><br>{{ app.motivation|nl2br }}</p>
+                                <p><strong>Date :</strong> {{ app.submitted_at|date('d/m/Y H:i') }}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {# 📄 Pagination compatible avec le filtre #}
+        {% if totalPages > 1 %}
+            <nav aria-label="Pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% for i in 1..totalPages %}
+                        <li class="page-item {{ i == page ? 'active' : '' }}">
+                            <a class="page-link"
+                               href="{{ base_path }}/admin/applications?page={{ i }}{% if filter_status %}&status={{ filter_status }}{% endif %}">
+                                {{ i }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% endif %}
+{% endblock %}

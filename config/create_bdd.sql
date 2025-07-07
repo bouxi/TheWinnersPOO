@@ -45,5 +45,19 @@ ALTER TABLE users
     ADD COLUMN reset_token VARCHAR(255) DEFAULT NULL,
     ADD COLUMN reset_token_expires_at DATETIME DEFAULT NULL;
 
+CREATE TABLE applications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    class VARCHAR(50) NOT NULL,
+    specialization VARCHAR(50) DEFAULT NULL,
+    playtime VARCHAR(100) DEFAULT NULL,
+    availability TEXT DEFAULT NULL,
+    motivation TEXT NOT NULL,
+    submitted_at DATETIME NOT NULL,
+    status ENUM('pending', 'accepted', 'refused') NOT NULL DEFAULT 'pending',
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
+ALTER TABLE applications
+    ADD COLUMN has_joined_guild BOOLEAN NOT NULL DEFAULT FALSE;
 

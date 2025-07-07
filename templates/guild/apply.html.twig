@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Candidature - TheWinners{% endblock %}
+
+{% block content %}
+    <div class="main-apply text-center">
+        <h2>🎯 Candidature à la guilde</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+
+                {# ⚠️ Message d'erreur global #}
+                {% if error %}
+                    <div class="alert alert-danger text-center">{{ error }}</div>
+                {% endif %}
+
+                <form method="post" action="{{ base_path }}/guild/apply" class="form-candidature">
+                    {# ✅ Pseudo #}
+                    <div class="mb-3">
+                        <label for="pseudo" class="form-label">Pseudo en jeu</label>
+                        <input type="text" name="pseudo" id="pseudo" class="form-control"
+                               value="{{ old.pseudo ?? '' }}" required>
+                    </div>
+
+                    {# ✅ Classe #}
+                    <div class="mb-3">
+                        <label for="class" class="form-label">Classe</label>
+                        <select name="class" id="class" class="form-select" required>
+                            <option value="">-- Choisir une classe --</option>
+                            {% for className, specs in classes %}
+                                <option value="{{ className }}"
+                                        {% if old.class is defined and old.class == className %}selected{% endif %}>
+                                    {{ className }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    {# ✅ Spécialisation (remplie dynamiquement en JS) #}
+                    <div class="mb-3">
+                        <label for="specialization" class="form-label">Spécialisation</label>
+                        <select name="specialization" id="specialization" class="form-select" required>
+                            <option value="">-- Choisir une spécialisation --</option>
+                        </select>
+                    </div>
+
+                    {# ✅ Temps de jeu (heures/semaine) #}
+                    <div class="mb-3">
+                        <label for="playtime" class="form-label">Temps de jeu hebdomadaire</label>
+                        <select name="playtime" id="playtime" class="form-select" required>
+                            <option value="">-- Sélectionner --</option>
+                            {% for hour in 1..50 %}
+                                <option value="{{ hour }}h"
+                                        {{ old.playtime is defined and old.playtime == hour ~ 'h' ? 'selected' : '' }}>
+                                    {{ hour }} h / semaine
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    {# ✅ Disponibilités (jours/heures) #}
+                    <div class="mb-3">
+                        <label for="availability" class="form-label">Disponibilités</label>
+                        <textarea name="availability" id="availability" class="form-control" rows="3"
+                                  placeholder="Exemple : Soirées en semaine, week-end libre"
+                                  required>{{ old.availability ?? '' }}</textarea>
+                    </div>
+
+                    {# ✅ Motivation #}
+                    <div class="mb-3">
+                        <label for="motivation" class="form-label">Motivation</label>
+                        <textarea name="motivation" id="motivation" class="form-control"
+                                  rows="4" required>{{ old.motivation ?? '' }}</textarea>
+                    </div>
+
+                    {# ✅ Envoi #}
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-danger">Envoyer ma candidature</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {# ✅ Script dynamique de gestion des spécialisations #}
+    <script>
+        const specialisations = {{ classes|json_encode|raw }};
+        const classSelect = document.getElementById('class');
+        const specSelect = document.getElementById('specialization');
+        const oldSpec = "{{ old.specialization|default('') }}";
+
+        function updateSpecs() {
+            const selectedClass = classSelect.value;
+            specSelect.innerHTML = '<option value="">-- Choisir une spécialisation --</option>';
+
+            if (specialisations[selectedClass]) {
+                specialisations[selectedClass].forEach(spec => {
+                    const opt = document.createElement('option');
+                    opt.value = spec;
+                    opt.textContent = spec;
+                    if (spec === oldSpec) {
+                        opt.selected = true;
+                    }
+                    specSelect.appendChild(opt);
+                });
+            }
+        }
+
+        classSelect.addEventListener('change', updateSpecs);
+        window.addEventListener('DOMContentLoaded', updateSpecs);
+    </script>
+{% endblock %}

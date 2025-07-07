@@ -3,27 +3,28 @@
 {% block title %}Gestion des messages{% endblock %}
 
 {% block content %}
+    {% set sort = sort|default('created_at') %}
+    {% set order = order|default('DESC') %}
+
     {% if flash_success %}
         <div class="alert alert-success text-center">{{ flash_success }}</div>
     {% endif %}
 
     <h1 class="mb-4">📨 Messages envoyés</h1>
 
+    {# 🔍 Recherche #}
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Rechercher par contenu ou pseudo"
+                   value="{{ search|default('') }}">
+            <button type="submit" class="btn btn-outline-light">🔍</button>
+        </div>
+    </form>
+
     {% if messages is empty %}
         <div class="alert alert-warning">Aucun message trouvé.</div>
     {% else %}
-        {# 🔍 Recherche #}
-        <form method="get" class="mb-4">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Rechercher par mot-clé (contenu ou nom)"
-                       value="{{ search|default('') }}">
-                <button type="submit" class="btn btn-outline-light">🔍 Rechercher</button>
-            </div>
-        </form>
-
-        {# 🧾 Formulaire de suppression multiple #}
         <form method="POST" action="/admin/messages/delete-multiple" onsubmit="return confirm('Supprimer les messages sélectionnés ?');">
-
             <table class="table table-dark table-bordered table-hover align-middle">
                 <thead class="table-active">
                 <tr>
@@ -41,7 +42,7 @@
                             ✅ Lu
                         </a>
                     </th>
-                    <th>Objet</th>
+                    <th>Contenu</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -60,14 +61,39 @@
                                 <span class="badge bg-warning text-dark">Non</span>
                             {% endif %}
                         </td>
-                        <td>{{ msg.content|slice(0, 40) ~ '...' }}</td>
+                        <td>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#modal-{{ msg.id }}">
+                                {{ msg.content|slice(0, 30) ~ '...' }}
+                            </a>
+                        </td>
                         <td class="d-flex gap-1">
-                            <a href="/admin/messages/view/{{ msg.id }}" class="btn btn-sm btn-outline-info">👁 Voir</a>
                             <form method="POST" action="/admin/messages/delete/{{ msg.id }}" onsubmit="return confirm('Supprimer ce message ?');">
                                 <button type="submit" class="btn btn-sm btn-danger">🗑</button>
                             </form>
                         </td>
                     </tr>
+
+                    {# 🧾 Modale Bootstrap de lecture complète #}
+                    <div class="modal fade" id="modal-{{ msg.id }}" tabindex="-1" aria-labelledby="modalLabel-{{ msg.id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content text-dark">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalLabel-{{ msg.id }}">📨 Message complet</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><strong>De :</strong> {{ msg.senderUsername }}</p>
+                                    <p><strong>À :</strong> {{ msg.recipientUsername }}</p>
+                                    <p><strong>Reçu le :</strong> {{ msg.created_at|date('d/m/Y H:i') }}</p>
+                                    <hr>
+                                    <p>{{ msg.content }}</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 {% endfor %}
                 </tbody>
             </table>
@@ -81,7 +107,10 @@
                 <ul class="pagination justify-content-center">
                     {% for i in 1..totalPages %}
                         <li class="page-item {{ i == currentPage ? 'active' : '' }}">
-                            <a class="page-link" href="?q={{ search }}&page={{ i }}&sort={{ sort }}&order={{ order }}">{{ i }}</a>
+                            <a class="page-link"
+                               href="?page={{ i }}&q={{ search|url_encode }}&sort={{ sort }}&order={{ order }}">
+                                {{ i }}
+                            </a>
                         </li>
                     {% endfor %}
                 </ul>
@@ -89,7 +118,7 @@
         {% endif %}
     {% endif %}
 
-    {# 🧠 JS pour checkAll #}
+    {# JS : Sélectionner tous les messages #}
     <script>
         document.getElementById('checkAll')?.addEventListener('change', function () {
             document.querySelectorAll('input[name="ids[]"]').forEach(cb => cb.checked = this.checked);

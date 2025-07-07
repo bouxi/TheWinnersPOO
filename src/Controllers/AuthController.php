@@ -16,7 +16,7 @@ class AuthController
     public function loginForm(): void
     {
         $view = new View();
-        $view->render('login.html.twig');
+        $view->render('user/login.html.twig');
     }
 
     public function login(): void
@@ -39,10 +39,10 @@ class AuthController
             Utils::flashSuccess("Bienvenue " . $user->getUsername() . " !");
 
             // ✅ Redirection vers profil (ou dashboard)
-            Utils::redirect('/profile');
+            Utils::redirect('/user/profile');
         } else {
             $view = new View();
-            $view->render('login.html.twig', [
+            $view->render('user/login.html.twig', [
                 'error' => 'Identifiants incorrects.'
             ]);
         }
@@ -51,13 +51,13 @@ class AuthController
     public function logout(): void
     {
         session_destroy();
-        Utils::redirect('/login');
+        Utils::redirect('/user/login');
     }
 
     public function registerForm(): void
     {
         $view = new View();
-        $view->render('register.html.twig');
+        $view->render('user/register.html.twig');
     }
 
     public function register(): void
@@ -71,18 +71,18 @@ class AuthController
         $view = new View();
 
         if (empty($username) || empty($email) || empty($password) || empty($passwordConfirm)) {
-            $view->render('register.html.twig', ['error' => 'Tous les champs obligatoires doivent être remplis.']);
+            $view->render('user/register.html.twig', ['error' => 'Tous les champs obligatoires doivent être remplis.']);
             return;
         }
 
         if ($password !== $passwordConfirm) {
-            $view->render('register.html.twig', ['error' => 'Les mots de passe ne correspondent pas.']);
+            $view->render('user/register.html.twig', ['error' => 'Les mots de passe ne correspondent pas.']);
             return;
         }
 
         // 💪 Vérification de la force du mot de passe
         if (!$this->isPasswordStrong($password)) {
-            $view->render('register.html.twig', [
+            $view->render('user/register.html.twig', [
                 'error' => 'Mot de passe trop faible. Il doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.'
             ]);
             return;
@@ -91,7 +91,7 @@ class AuthController
         $userRepo = new UserRepository();
 
         if ($userRepo->findByUsername($username) || $userRepo->findByEmail($email)) {
-            $view->render('register.html.twig', ['error' => 'Nom d\'utilisateur ou email déjà utilisé.']);
+            $view->render('user/register.html.twig', ['error' => 'Nom d\'utilisateur ou email déjà utilisé.']);
             return;
         }
 
@@ -101,7 +101,7 @@ class AuthController
         );
 
         if ($_FILES['avatar']['name'] && !$avatarFilename) {
-            $view->render('register.html.twig', ['error' => 'Fichier invalide (format ou taille max 2 Mo)']);
+            $view->render('user/register.html.twig', ['error' => 'Fichier invalide (format ou taille max 2 Mo)']);
             return;
         }
 
@@ -112,7 +112,7 @@ class AuthController
         $userRepo->save($user);
 
         Utils::flashSuccess("Inscription réussie ! Vous pouvez maintenant vous connecter.");
-        Utils::redirect('/login');
+        Utils::redirect('/user/login');
     }
 
 
@@ -179,7 +179,7 @@ class AuthController
 
         if (!$user || $user->getResetTokenExpiresAt() < date('Y-m-d H:i:s')) {
             Utils::flashError("Lien invalide ou expiré.");
-            Utils::redirect('/login');
+            Utils::redirect('/user/login');
             return;
         }
 
@@ -208,7 +208,7 @@ class AuthController
 
         if (!$user || $user->getResetTokenExpiresAt() < date('Y-m-d H:i:s')) {
             Utils::flashError("Lien de réinitialisation invalide ou expiré.");
-            Utils::redirect('/login');
+            Utils::redirect('/user/login');
             return;
         }
 
@@ -232,7 +232,7 @@ class AuthController
         $userRepo->updatePasswordAndClearToken($user);
 
         Utils::flashSuccess("Mot de passe mis à jour. Vous pouvez vous connecter.");
-        Utils::redirect('/login');
+        Utils::redirect('/user/login');
     }
 
     // Fonction réutilisable : vérifie la complexité

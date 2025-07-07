@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Core\Security;
 use App\Core\Utils;
 use App\Repositories\UserRepository;
+use App\Repositories\ApplicationRepository;
 use App\Services\UploadService;
 use App\Views\View;
 
@@ -20,18 +21,21 @@ class ProfileController
         $user = Security::getCurrentUser();
 
         if (!$user) {
-            Utils::redirectError('/profile', 'Utilisateur introuvable');
+            Utils::redirectError('/user/profile', 'Utilisateur introuvable');
         }
 
+        // 🔍 Vérifie si le user a déjà rejoint la guilde
+        $appRepo = new ApplicationRepository();
+        $hasJoined = $appRepo->hasJoinedGuild($user->getId());
 
         $view = new View();
-        $view->render('profile.html.twig', [
+        $view->render('user/profile.html.twig', [ // ✅ Chemin corrigé ici
             'isAuthenticated' => true,
             'user' => $user,
+            'has_joined_guild' => $hasJoined,
             'success' => $_GET['success'] ?? null,
             'error' => $_GET['error'] ?? null,
         ]);
-
     }
 
     /**
@@ -43,7 +47,7 @@ class ProfileController
         $user = Security::getCurrentUser();
 
         if (!$user) {
-            Utils::redirectError('/profile', 'Utilisateur introuvable');
+            Utils::redirectError('/user/profile', 'Utilisateur introuvable');
         }
 
         // ✏️ Récupération des champs du formulaire
@@ -56,42 +60,36 @@ class ProfileController
 
         // 🔒 Vérifie que le mot de passe actuel est correct
         if (!$user->verifyPassword($currentPassword)) {
-            Utils::redirectError('/profile', 'Mot de passe actuel incorrect');
+            Utils::redirectError('/user/profile', 'Mot de passe actuel incorrect');
         }
 
         // 📧 Mise à jour email et date de naissance
         $user->setEmail($email);
         $user->setBirthdate($birthdate ?: null);
 
-        // 🔐 Si l'utilisateur souhaite modifier son mot de passe
+        // 🔐 Mise à jour du mot de passe si demandé
         if (!empty($newPassword) || !empty($confirmPassword)) {
-            // ✅ Vérifie la force du nouveau mot de passe
             if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$/', $newPassword)) {
-                Utils::redirectError('/profile', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.');
+                Utils::redirectError('/user/profile', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.');
             }
 
-            // 🔁 Vérifie que les deux champs correspondent
             if ($newPassword !== $confirmPassword) {
-                Utils::redirectError('/profile', 'Les mots de passe ne correspondent pas');
+                Utils::redirectError('/user/profile', 'Les mots de passe ne correspondent pas');
             }
 
-            // 🔐 Hachage et mise à jour
-            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-            $user->setPassword($hashedPassword);
+            $user->setPassword(password_hash($newPassword, PASSWORD_DEFAULT));
         }
 
-        // 🖼️ Avatar : suppression
-        if ($deleteAvatar && $user->getAvatar() !== 'default.png') {
+        // 🖼️ Suppression avatar
+        if ($deleteAvatar && $user->getAvatar() !== 'default-avatar.png') {
             $avatarPath = __DIR__ . '/../../public/uploads/avatars/' . basename($user->getAvatar());
-
             if (is_file($avatarPath)) {
                 unlink($avatarPath);
             }
-
-            $user->setAvatar('default.png');
+            $user->setAvatar('default-avatar.png');
         }
 
-        // 🖼️ Avatar : upload d’un nouveau
+        // 🖼️ Upload nouvel avatar
         if (isset($_FILES['avatar']) && !empty($_FILES['avatar']['name'])) {
             $oldAvatarPath = $user->getAvatar()
                 ? __DIR__ . '/../../public/uploads/avatars/' . $user->getAvatar()
@@ -104,24 +102,21 @@ class ProfileController
             );
 
             if (!$newAvatar) {
-                Utils::redirectError('/profile', 'Fichier avatar invalide');
+                Utils::redirectError('/user/profile', 'Fichier avatar invalide');
             }
 
             $user->setAvatar($newAvatar);
         }
 
-        // 💾 Mise à jour en base de données
+        // 💾 Enregistrement
         $userRepo = new UserRepository();
         if ($userRepo->update($user)) {
-            // Mise à jour de la session avec les nouvelles infos
             $_SESSION['user'] = $user->toArray();
-
-            Utils::redirectSuccess('/profile', 'Profil mis à jour avec succès');
+            Utils::redirectSuccess('/user/profile', 'Profil mis à jour avec succès');
         } else {
-            Utils::redirectError('/profile', 'Erreur lors de la mise à jour');
+            Utils::redirectError('/user/profile', 'Erreur lors de la mise à jour');
         }
     }
-
 
     /**
      * Supprime uniquement l’avatar de l’utilisateur
@@ -132,25 +127,23 @@ class ProfileController
         $user = Security::getCurrentUser();
 
         if (!$user) {
-            Utils::redirectError('/profile', 'Utilisateur introuvable');
+            Utils::redirectError('/user/profile', 'Utilisateur introuvable');
         }
 
         $filename = basename($user->getAvatar());
 
-        if ($filename && $filename !== 'default.png') {
+        if ($filename && $filename !== 'default-avatar.png') {
             $path = __DIR__ . '/../../public/uploads/avatars/' . $filename;
 
             if (file_exists($path) && is_file($path)) {
                 unlink($path);
             }
 
-            $user->setAvatar('default.png');
+            $user->setAvatar('default-avatar.png');
             (new UserRepository())->update($user);
-
-            // Met à jour la session après suppression
             $_SESSION['user'] = $user->toArray();
         }
 
-        Utils::redirectSuccess('/profile', 'Avatar supprimé avec succès');
+        Utils::redirectSuccess('/user/profile', 'Avatar supprimé avec succès');
     }
 }

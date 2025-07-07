@@ -8,7 +8,13 @@
                     <a href="/messages/read/{{ msg.id }}">
                         {{ msg.content|slice(0, 40) }}{% if msg.content|length > 40 %}...{% endif %}
                     </a><br>
-                    <small>De : {{ msg.getSenderUsername }}</small>
+                    <small>De : {{ msg.sender.getUsername() }}
+                        <img src="{{ avatar_url(msg.getSender.getAvatar) }}"
+                             alt="Avatar de {{ msg.getSender.getUsername }}"
+                             class="avatar-img"
+                             style="width: 46px; height: 46px; border-radius: 50%; object-fit: cover;">
+
+                    </small>
                 </div>
 
                 <div class="text-end">

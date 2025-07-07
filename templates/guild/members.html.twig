@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Membres de la guilde - TheWinners{% endblock %}
+
+{% block content %}
+    <div class="main-members text-center">
+        <h2 class="mb-4">👥 Membres de la guilde</h2>
+
+        <!-- 🔍 Filtres -->
+        <form method="get" class="row g-3 justify-content-center mb-4">
+            <div class="col-md-3">
+                <select name="class" class="form-select" onchange="this.form.submit()">
+                    <option value="">-- Classe --</option>
+                    {% for cls in classes %}
+                        <option value="{{ cls }}" {{ cls == currentClass ? 'selected' : '' }}>{{ cls }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="role" class="form-select" onchange="this.form.submit()">
+                    <option value="">-- Rôle --</option>
+                    {% for r in roles %}
+                        <option value="{{ r }}" {{ r == currentRole ? 'selected' : '' }}>{{ r|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="sort" class="form-select" onchange="this.form.submit()">
+                    <option value="username" {{ sort == 'username' ? 'selected' : '' }}>Pseudo</option>
+                    <option value="class" {{ sort == 'class' ? 'selected' : '' }}>Classe</option>
+                    <option value="role" {{ sort == 'role' ? 'selected' : '' }}>Rôle</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="order" class="form-select" onchange="this.form.submit()">
+                    <option value="asc" {{ order == 'asc' ? 'selected' : '' }}>Ordre croissant</option>
+                    <option value="desc" {{ order == 'desc' ? 'selected' : '' }}>Ordre décroissant</option>
+                </select>
+            </div>
+        </form>
+
+        <!-- 👥 Liste des membres -->
+        <div class="row">
+            {% for member in members %}
+                <div class="col-md-4 mb-4">
+                    <div class="card bg-dark text-white h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <img src="{{ avatar_url(member.avatar) }}"
+                                 alt="Avatar de {{ member.username }}"
+                                 class="avatar-img mb-2"
+                                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+
+                            <h5 class="card-title">{{ member.username }}</h5>
+                            <span class="badge bg-danger mb-2">{{ member.role|capitalize }}</span>
+
+                            <p class="card-text">
+                                <strong>Classe :</strong> {{ member.class }}<br>
+                                <strong>Spé :</strong> {{ member.specialization }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12 mt-4">
+                    <div class="alert alert-warning">
+                        😕 Aucun membre trouvé avec ces filtres.
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- 📄 Pagination -->
+        {% if totalPages > 1 %}
+            <nav aria-label="Pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% for i in 1..totalPages %}
+                        <li class="page-item {{ i == page ? 'active' : '' }}">
+                            <a class="page-link"
+                               href="?page={{ i }}
+                               {% if currentClass %}&class={{ currentClass }}{% endif %}
+                               {% if currentRole %}&role={{ currentRole }}{% endif %}
+                               {% if sort %}&sort={{ sort }}{% endif %}
+                               {% if order %}&order={{ order }}{% endif %}
+                               ">
+                                {{ i }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+{% endblock %}

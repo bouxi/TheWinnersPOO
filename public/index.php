@@ -1,19 +1,17 @@
 <?php
 require __DIR__ . '/../vendor/autoload.php';
 
-
-
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 // ✅ Fixe le fuseau horaire pour tout PHP (avant toute création de date)
 date_default_timezone_set('Europe/Brussels');
-    /*
-     * ini_set('log_errors', 1);
-       ini_set('error_log', __DIR__ . '/../var/log/php_errors.log');
 
-     */
+/*
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/../var/log/php_errors.log');
+*/
 
 use App\Core\Env;
 use App\Core\Bootstrap;
@@ -31,14 +29,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-/*
-var_dump($_SERVER['REQUEST_URI']);
-exit;
-*/
-
 // ⚙️ Chargement de l'environnement
 Env::load(); // charge les variables de ton fichier .env
-
 $env = Env::get('APP_ENV');
 
 // ⚙️ Boot de l'application
@@ -71,16 +63,15 @@ if (isset($_SESSION['user']) && is_array($_SESSION['user'])) {
     $twig->addGlobal('unreadMessages', 0);
 }
 
-/*
 // 🛠️ Fonction asset() disponible dans Twig
-$twig->addFunction(new TwigFunction('asset', function (string $path): string {
-    return App::getBasePath() . '/' . ltrim($path, '/');
-}));
-*/
-
-// Fonction asset() disponible dans Twig
 $twig->addFunction(new TwigFunction('asset', function ($asset) {
     return sprintf('/assets/%s', ltrim($asset, '/'));
+}));
+
+// ✅ Fonction avatar_url() pour corriger les liens d'avatar
+$twig->addFunction(new TwigFunction('avatar_url', function (?string $filename): string {
+    $file = $filename ?: 'default-avatar.png';
+    return App::getBasePath() . '/uploads/avatars/' . ltrim($file, '/');
 }));
 
 // 🌍 Variables globales supplémentaires
@@ -92,4 +83,3 @@ $twig->addGlobal('isDevMode', App::isDevMode());
 $router = new Router();
 (require __DIR__ . '/../routes.php')($router);
 $router->handleRequest();
-

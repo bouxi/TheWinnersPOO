@@ -132,6 +132,8 @@ ul {
     max-width: 250px;
 }
 
+
+
 /* ✅ Labels blancs */
 .formulaire-profile label,
 .formulaire-register label {
@@ -147,7 +149,8 @@ ul {
 
 
 /* Style général */
-.main-profile, .main-register {
+.main-profile, .main-register,
+.main-members{
     background-color: rgba(0, 0, 0, 0.45);
     border-radius: 15px;
     padding: 15px;
@@ -244,7 +247,10 @@ ul {
 
 
 
-.main-login {
+.main-login,
+.main-apply,
+.main-message,
+.main {
     background-color: rgba(0, 0, 0, 0.45); /* semi-transparent */
     border-radius: 15px;
     padding: 15px;
@@ -364,4 +370,23 @@ footer a:hover {
 
 li.valid .rule-icon {
     color: green;
+}
+
+.avatar-img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #aaa;
+}
+
+.pagination .page-link {
+    color: #fff;
+    background-color: #444;
+    border: 1px solid #666;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
 }

@@ -3,25 +3,35 @@
 {% block title %}Message reçu{% endblock %}
 
 {% block content %}
-    <div class="row justify-content-center text-center">
-        <div class="col-md-6 col-lg-6">
-            <h2 class="mb-4">📨 Message</h2>
-            <p><strong>De : {{ message.getSender.username }}</strong>
-                {% set avatarPath = message.getSender.avatar ? base_path ~  'uploads/avatars/' ~ message.getSender.avatar : base_path ~  'assets/images/default-avatar.png' %}
-                <img src="{{ asset(avatarPath) }}" class="rounded-circle me-2" width="40">
+    <div class="main-message">
+        <div class="row justify-content-center text-center">
+            <div class="col-md-6 col-lg-6">
+                <h2 class="mb-4">📨 Message</h2>
 
-            </p>
-            <p><strong>Reçu le :</strong> {{ message.getSentAt().format('d/m/Y H:i') }}</p>
-            <hr>
-            <p>{{ message.getContent }}</p>
+                <div class="d-flex align-items-center justify-content-center mb-3">
+                    {% set avatarPath = message.getSender.getAvatar
+                        ? base_path ~ 'uploads/avatars/' ~ message.getSender.getAvatar
+                        : base_path ~ 'assets/images/default-avatar.png' %}
 
-            <form method="post" action="/messages/delete/{{ message.id }}">
-                <button class="btn btn-danger">Supprimer</button>
-                <a href="/messages/reply/{{ message.getSenderId() }}" class="btn btn-primary">Répondre</a>
-                <a href="/messages" class="btn btn-secondary">Retour</a>
+                    <img src="{{ avatar_url(msg.getSender.getAvatar) }}"
+                         alt="Avatar de {{ msg.getSender.getUsername }}"
+                         class="avatar-img"
+                         style="width: 46px; height: 46px; border-radius: 50%; object-fit: cover;">
 
-            </form>
+                    <span><strong>De :</strong> {{ message.getSender.getUsername }}</span>
+                </div>
+
+
+                <p><strong>Reçu le :</strong> {{ message.getSentAt().format('d/m/Y H:i') }}</p>
+                <hr>
+                <p>{{ message.getContent }}</p>
+
+                <form method="post" action="/messages/delete/{{ message.getId }}">
+                    <button class="btn btn-danger">Supprimer</button>
+                    <a href="/messages/reply/{{ message.getSenderId() }}" class="btn btn-primary">Répondre</a>
+                    <a href="/messages" class="btn btn-secondary">Retour</a>
+                </form>
+            </div>
         </div>
     </div>
-
 {% endblock %}

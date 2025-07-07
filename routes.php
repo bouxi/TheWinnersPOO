@@ -3,14 +3,17 @@
 use App\Controllers\AdminController;
 use App\Controllers\AdminMessageController;
 use App\Controllers\AdminUserController;
+use App\Controllers\ApplicationController;
 use App\Controllers\AuthController;
 use App\Controllers\HomeController;
 use App\Controllers\MessageController;
 use App\Controllers\ProfileController;
 use App\Controllers\TipsController;
 use App\Core\Router;
+use App\Controllers\AdminApplicationController;
 use App\Controllers\NotAvailableController;
 use App\Views\View;
+use App\Controllers\GuildController;
 
 return function (Router $router): void {
     // 🔐 Protection pour les routes admin
@@ -20,16 +23,16 @@ return function (Router $router): void {
     $router->addRoute('GET', '/', [new HomeController(), 'index']);
 
     // 🔑 Authentification
-    $router->addRoute('GET', '/login', [new AuthController(), 'loginForm']);
-    $router->addRoute('POST', '/login', [new AuthController(), 'login']);
-    $router->addRoute('GET', '/logout', [new AuthController(), 'logout']);
-    $router->addRoute('GET', '/register', [new AuthController(), 'registerForm']);
-    $router->addRoute('POST', '/register', [new AuthController(), 'register']);
+    $router->addRoute('GET',  '/user/login',     [new AuthController(), 'loginForm']);
+    $router->addRoute('POST', '/user/login',     [new AuthController(), 'login']);
+    $router->addRoute('GET',  '/user/logout',    [new AuthController(), 'logout']);
+    $router->addRoute('GET',  '/user/register',  [new AuthController(), 'registerForm']);
+    $router->addRoute('POST', '/user/register',  [new AuthController(), 'register']);
 
     // 👤 Profil utilisateur
-    $router->addRoute('GET', '/profile', [new ProfileController(), 'index']);
-    $router->addRoute('POST', '/profile/update', [new ProfileController(), 'update']);
-    $router->addRoute('POST', '/profile/remove-avatar', [new ProfileController(), 'removeAvatar']);
+    $router->addRoute('GET', '/user/profile', [new ProfileController(), 'index']);
+    $router->addRoute('POST', '/user/profile/update', [new ProfileController(), 'update']);
+    $router->addRoute('POST', '/user/profile/remove-avatar', [new ProfileController(), 'removeAvatar']);
 
     // 💬 Messagerie utilisateur
     $router->addRoute('GET', '/messages', [new MessageController(), 'index']);
@@ -88,6 +91,9 @@ return function (Router $router): void {
         $requireAdmin();
         (new AdminMessageController())->delete((int)$id);
     });
+    $router->addRoute('GET', '/admin/applications', [new AdminApplicationController, 'index']);
+    $router->addRoute('POST', '/admin/applications/update-status', [new AdminApplicationController, 'updateStatus']);
+    $router->addRoute('GET', '/admin/applications/{id}', [new AdminApplicationController, 'show']);
 
     $router->addRoute('GET','/en-travaux', [new NotAvailableController(), 'index']);
 
@@ -97,6 +103,9 @@ return function (Router $router): void {
     $router->addRoute('GET', '/reset-password/{token}', fn($token) => (new AuthController())->resetPasswordForm($token));
     $router->addRoute('POST', '/reset-password/{token}', fn($token) => (new AuthController())->handleResetPassword($token));
 
+    // Postuler
+    $router->addRoute('GET', '/apply', [new ApplicationController(), 'showForm']);
+    $router->addRoute('POST', '/apply', [new ApplicationController(), 'submit']);
 
     // 💡 Conseils / Astuces
     $router->addRoute('GET', '/tips', [new TipsController(), 'index']);
@@ -114,4 +123,7 @@ return function (Router $router): void {
     $router->addRoute('GET', '/cgu', fn() => (new View())->render('pages/cgu.html.twig'));
     $router->addRoute('GET', '/confidentialite', fn() => (new View())->render('pages/confidentialite.html.twig'));
     $router->addRoute('GET', '/legal', fn() => (new View())->render('pages/legal.html.twig'));
+
+    $router->addRoute('GET','/guild/members', [new GuildController(), 'members']);
+
 };

@@ -14,19 +14,31 @@ class MessageController
     {
         Security::requireAuth();
         $user = Security::getCurrentUser();
+        $userId = $user->getId();
+
+        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        $limit = 6;
+        $offset = ($page - 1) * $limit;
 
         $repo = new MessageRepository();
-        $messages = $repo->findAllByUserId($user->getId());
+        $messages = $repo->findPaginatedByUserId($userId, $limit, $offset);
+        $total = $repo->countByUserId($userId);
+        $totalPages = ceil($total / $limit);
 
         (new View())->render('messages/index.html.twig', [
             'user' => $user,
             'messages' => $messages,
+            'currentPage' => $page,
+            'totalPages' => $totalPages
         ]);
     }
+
+
 
     public function create(): void
     {
         Security::requireAuth();
+
 
         $users = (new UserRepository())->findAll();
 
@@ -55,6 +67,8 @@ class MessageController
     public function read(int $id): void
     {
         Security::requireAuth();
+        $user = Security::getCurrentUser();
+
         $repo = new MessageRepository();
         $message = $repo->findById($id);
 
@@ -62,6 +76,7 @@ class MessageController
             $repo->markAsRead($id);
             (new View())->render('messages/read.html.twig', [
                 'message' => $message,
+                'user' => $user,
             ]);
         } else {
             Utils::redirectError('/messages', 'Message introuvable');
@@ -100,6 +115,7 @@ class MessageController
 
         (new View())->render('messages/_messages.html.twig', [
             'messages' => $messages,
+            'user' => $user,
         ]);
     }
 

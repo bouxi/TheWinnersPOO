@@ -3,6 +3,9 @@
 {% block title %}Mes messages{% endblock %}
 
 {% block content %}
+    {% set sort = sort|default('created_at') %}
+    {% set order = order|default('DESC') %}
+
     <div class="main">
         <div class="row justify-content-center text-center">
             <div class="col-md-6 col-lg-6">
@@ -37,6 +40,19 @@
             </form>
         </div>
     </div>
+
+    {% if totalPages > 1 %}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% for p in 1..totalPages %}
+                    <li class="page-item {% if p == currentPage %}active{% endif %}">
+                        <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+    {% endif %}
+
 {% endblock %}
 
 {% block javascripts %}

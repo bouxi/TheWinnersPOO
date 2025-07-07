@@ -56,6 +56,11 @@ class Message
         return $this->sender->getId();
     }
 
+    public function getSenderAvatar(): ?string
+    {
+        return $this->sender->getAvatar();
+    }
+
 
     // ❌ Plus besoin de setters dans ce cas si l’objet est immuable après création.
     // ➕ Si tu veux modifier le message plus tard, on pourra ajouter des setters.
