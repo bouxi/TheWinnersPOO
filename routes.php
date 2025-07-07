@@ -117,7 +117,7 @@ return function (Router $router): void {
 
     // 📄 Pages publiques (footer)
     $router->addRoute('GET', '/news', fn() => (new View())->render('pages/news.html.twig'));
-    $router->addRoute('GET', '/members', fn() => (new View())->render('pages/members.html.twig'));
+    $router->addRoute('GET', '/members', fn() => (new View())->render('guild/members.html.twig'));
     $router->addRoute('GET', '/forum', fn() => (new View())->render('pages/forum.html.twig'));
     $router->addRoute('GET', '/faq', fn() => (new View())->render('pages/faq.html.twig'));
     $router->addRoute('GET', '/cgu', fn() => (new View())->render('pages/cgu.html.twig'));

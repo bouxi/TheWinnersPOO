@@ -3,8 +3,8 @@
 /vendor/
 
 # Configurations sensibles
-.env
-.env.prod
+/.env
+/.env.prod
 
 # Fichiers temporaires
 *.log
