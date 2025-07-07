@@ -1,5 +1,11 @@
 <?php
+// Démarrer le timer
+define('DEBUG_START', microtime(true)); // Pour le debug
+
+// Inclure l'autoloader, démarrer l'application...
 require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../src/Debug/Debug.php'; // Notre futur système
+
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -72,3 +78,6 @@ $twig->addGlobal('isDevMode', App::isDevMode());
 $router = new Router();
 (require __DIR__ . '/../routes.php')($router);
 $router->handleRequest();
+
+// Affichage de la DebugBar
+\App\Debug\Debug::render(); // Pour le debug
