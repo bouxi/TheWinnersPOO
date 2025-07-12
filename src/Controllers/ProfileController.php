@@ -58,17 +58,18 @@ class ProfileController
         $confirmPassword = $_POST['confirm_password'] ?? '';
         $deleteAvatar    = !empty($_POST['delete_avatar']);
 
-        // 🔒 Vérifie que le mot de passe actuel est correct
-        if (!$user->verifyPassword($currentPassword)) {
-            Utils::redirectError('/user/profile', 'Mot de passe actuel incorrect');
-        }
-
         // 📧 Mise à jour email et date de naissance
         $user->setEmail($email);
         $user->setBirthdate($birthdate ?: null);
 
         // 🔐 Mise à jour du mot de passe si demandé
         if (!empty($newPassword) || !empty($confirmPassword)) {
+
+            // 🔒 Vérifie que le mot de passe actuel est correct
+            if (!$user->verifyPassword($currentPassword)) {
+                Utils::redirectError('/user/profile', 'Mot de passe actuel incorrect');
+            }
+
             if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$/', $newPassword)) {
                 Utils::redirectError('/user/profile', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.');
             }
@@ -117,6 +118,7 @@ class ProfileController
             Utils::redirectError('/user/profile', 'Erreur lors de la mise à jour');
         }
     }
+
 
     /**
      * Supprime uniquement l’avatar de l’utilisateur

@@ -32,7 +32,7 @@
         <ul class="nav flex-column">
             <h4>Nos guides</h4>
             <li class="nav-item mb-2">
-                <a class="nav-link text-white" href="{{ base_path }}/en-travaux">
+                <a class="nav-link text-white" href="{{ base_path }}/guides/classes">
                     Guides des classes
                 </a>
             </li>
@@ -99,36 +99,37 @@
 <script>
     let lastCount = 0;
     function updateEnvelopeCount() {
-        fetch('{{ base_path }}/messages/unread-count')
-            .then(res => res.json())
+        fetch('{{ base_path }}/messages/unread-count') // URL de l'API
+            .then(res => res.json())  // On transforme la réponse en JSON
             .then(data => {
                 const badge = document.getElementById('message-count');
-                const count = parseInt(data.count);
+                const count = parseInt(data.count);  // Assure-toi que la valeur est un nombre entier
                 if (badge) {
-                    badge.textContent = count;
-                    badge.style.display = (count === 0) ? 'none' : 'inline-block';
+                    badge.textContent = count;  // Affiche le nombre de messages non lus
+                    badge.style.display = (count === 0) ? 'none' : 'inline-block'; // Cache si 0
                 }
 
-                if (count > lastCount) {
+                if (count > lastCount) {  // Si le nombre de messages a augmenté
                     const sound = document.getElementById('messageSound');
-                    sound.play();
+                    sound.play();  // Joue un son
 
+                    // Crée une notification toast
                     const toast = document.createElement('div');
                     toast.className = 'alert alert-info shadow';
                     toast.innerHTML = `<strong>Nouveau message !</strong> Vous avez ${count} message(s) non lu(s).`;
 
                     const container = document.getElementById('notification-container');
                     container.appendChild(toast);
-                    setTimeout(() => toast.remove(), 5000);
+                    setTimeout(() => toast.remove(), 5000);  // Retire la notification après 5 secondes
                 }
 
-                lastCount = count;
+                lastCount = count;  // Met à jour le dernier compteur
             })
-            .catch(err => console.error("Erreur compteur navbar:", err));
+            .catch(err => {
+                console.error("Erreur compteur navbar:", err);  // Gère les erreurs
+            });
     }
 
-    updateEnvelopeCount();
-    setInterval(updateEnvelopeCount, 5000);
 </script>
 
 <!-- ✅ Chargement JS principal (App.js chargé sur toutes les pages) -->

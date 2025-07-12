@@ -40,7 +40,7 @@ CREATE TABLE messages (
     FOREIGN KEY (recipient_id) REFERENCES users(id)
 );
 
-# Pas encore mise en ligne.
+
 ALTER TABLE users
     ADD COLUMN reset_token VARCHAR(255) DEFAULT NULL,
     ADD COLUMN reset_token_expires_at DATETIME DEFAULT NULL;
@@ -61,3 +61,15 @@ CREATE TABLE applications (
 ALTER TABLE applications
     ADD COLUMN has_joined_guild BOOLEAN NOT NULL DEFAULT FALSE;
 
+# Pas encore mise en ligne.
+CREATE TABLE class_guides (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    class_name VARCHAR(50) NOT NULL,
+    spec_name VARCHAR(50) NOT NULL,
+    slug VARCHAR(100) NOT NULL UNIQUE,
+    title VARCHAR(255) NOT NULL,
+    content LONGTEXT NOT NULL,
+    image VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);

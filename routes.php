@@ -12,8 +12,10 @@ use App\Controllers\TipsController;
 use App\Core\Router;
 use App\Controllers\AdminApplicationController;
 use App\Controllers\NotAvailableController;
+use App\Controllers\GuideController;
 use App\Views\View;
 use App\Controllers\GuildController;
+use App\Controllers\AdminGuideController;
 
 return function (Router $router): void {
     // 🔐 Protection pour les routes admin
@@ -94,6 +96,40 @@ return function (Router $router): void {
     $router->addRoute('GET', '/admin/applications', [new AdminApplicationController, 'index']);
     $router->addRoute('POST', '/admin/applications/update-status', [new AdminApplicationController, 'updateStatus']);
     $router->addRoute('GET', '/admin/applications/{id}', [new AdminApplicationController, 'show']);
+    $router->addRoute('GET', '/admin/guides/edit/{id}', function ($id) use ($requireAdmin) {
+        $requireAdmin();
+        (new AdminGuideController())->edit((int)$id);
+    });
+    $router->addRoute('POST', '/admin/guides/update/{id}', function ($id) use ($requireAdmin) {
+        $requireAdmin();
+        (new AdminGuideController())->update((int)$id);
+    });
+    // 🧠 Liste des guides
+    $router->addRoute('GET', '/admin/guides', function () use ($requireAdmin) {
+        $requireAdmin();
+        (new AdminGuideController())->index();
+    });
+
+// ✏️ Modifier un guide
+    $router->addRoute('GET', '/admin/guides/edit/{id}', function ($id) use ($requireAdmin) {
+        $requireAdmin();
+        (new AdminGuideController())->edit((int)$id);
+    });
+    $router->addRoute('POST', '/admin/guides/update/{id}', function ($id) use ($requireAdmin) {
+        $requireAdmin();
+        (new AdminGuideController())->update((int)$id);
+    });
+
+// ➕ Ajouter un guide
+    $router->addRoute('GET', '/admin/guides/create', function () use ($requireAdmin) {
+        $requireAdmin();
+        (new AdminGuideController())->create();
+    });
+    $router->addRoute('POST', '/admin/guides/store', function () use ($requireAdmin) {
+        $requireAdmin();
+        (new AdminGuideController())->store();
+    });
+
 
     $router->addRoute('GET','/en-travaux', [new NotAvailableController(), 'index']);
 
@@ -124,6 +160,11 @@ return function (Router $router): void {
     $router->addRoute('GET', '/confidentialite', fn() => (new View())->render('pages/confidentialite.html.twig'));
     $router->addRoute('GET', '/legal', fn() => (new View())->render('pages/legal.html.twig'));
 
+    // Membres Guildes
     $router->addRoute('GET','/guild/members', [new GuildController(), 'members']);
+
+    // Guides des classes perso + spé
+    $router->addRoute('GET', '/guides/classes', [new GuideController(), 'index']);
+    $router->addRoute('GET', '/guides/classes/{class}/{spec}', [new GuideController(), 'show']);
 
 };

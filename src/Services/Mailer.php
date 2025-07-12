@@ -13,23 +13,23 @@ class Mailer
     {
         $this->mail = new PHPMailer(true);
 
-        // 🧪 Configuration Mailtrap
+        // Configuration SMTP Amen.fr
         $this->mail->isSMTP();
-        $this->mail->Host = 'sandbox.smtp.mailtrap.io';
+        $this->mail->Host = $_ENV['MAILER_HOST'];
         $this->mail->SMTPAuth = true;
-        $this->mail->Username = $_ENV['MAIL_USERNAME'];
-        $this->mail->Password = $_ENV['MAIL_PASSWORD'];
-        $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $this->mail->Port = 587;
+        $this->mail->Username = $_ENV['MAILER_USER'];
+        $this->mail->Password = $_ENV['MAILER_PASS'];
 
-        $this->mail->setFrom('no-reply@thewinnersguilde.fr', 'TheWinners');
+        // Utilisation SSL (port 465)
+        $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // ⚙️ SSL obligatoire pour le port 465
+        $this->mail->Port = $_ENV['MAILER_PORT'];              // 465
+
+        $this->mail->setFrom($_ENV['MAILER_FROM'], $_ENV['MAILER_NAME']);
         $this->mail->isHTML(true);
 
-        // ✅ Correction d'encodage
+        // Encodage UTF-8
         $this->mail->CharSet = 'UTF-8';
     }
-
-
 
     public function send(string $toEmail, string $toName, string $subject, string $htmlBody): bool
     {

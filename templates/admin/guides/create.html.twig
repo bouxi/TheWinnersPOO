@@ -1,0 +1,36 @@
+{% extends 'admin/admin_base.html.twig' %}
+{% block title %}Créer un guide{% endblock %}
+
+{% block content %}
+    <h1>➕ Nouveau Guide</h1>
+
+    <form method="post" action="{{ base_path }}/admin/guides/store">
+        <div class="mb-3">
+            <label>Classe</label>
+            <input type="text" name="class" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Spécialisation</label>
+            <input type="text" name="spec" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Contenu</label>
+            <textarea id="content" name="content" class="form-control" rows="10" required></textarea>
+        </div>
+
+
+        <!-- ✅ Arbre de talents -->
+        <div class="form-group">
+            <label for="talent_tree_image">Nom du fichier de l’arbre de talents (.jpg)</label>
+            <input type="text" name="talent_tree_image" id="talent_tree_image" class="form-control">
+            <small class="form-text text-muted">
+                Ex : <code>chaman-restauration.jpg</code><br>
+                Le fichier doit être placé dans <code>/assets/images/talent_trees/</code>
+            </small>
+        </div>
+
+        <button type="submit" class="btn btn-success mt-3">💾 Enregistrer</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'admin/admin_base.html.twig' %}
+{% block title %}Guides - Admin{% endblock %}
+
+{% block content %}
+    <h1>📘 Gestion des Guides</h1>
+
+    <a class="btn btn-primary mb-3" href="{{ base_path }}/admin/guides/create">➕ Nouveau Guide</a>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Classe</th>
+            <th>Spécialisation</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for guide in guides %}
+            <tr>
+                <td>{{ guide.class }}</td>
+                <td>{{ guide.spec }}</td>
+                <td>
+                    <a class="btn btn-sm btn-secondary" href="{{ base_path }}/admin/guides/edit/{{ guide.id }}">Modifier</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -155,11 +155,11 @@ class AuthController
 
         // Génère token
         $token = bin2hex(random_bytes(32));
-        $expiresAt = (new DateTime('+1 hour'))->format('Y-m-d H:i:s');
+        $expiresAt = (new DateTime('+2 hour'))->format('Y-m-d H:i:s');
         $userRepo->saveResetToken($user->getId(), $token, $expiresAt);
 
         // Envoie e-mail
-        $resetLink = ($_ENV['APP_URL'] ?? 'http://thewinners.test') . "/reset-password/$token";
+        $resetLink = ($_ENV['APP_URL'] ?? 'https://thewinnersguilde.fr') . "/reset-password/$token";
         $subject = "🔐 Réinitialisation de votre mot de passe";
         $body = $this->buildResetEmailBody($user->getUsername(), $resetLink);
 

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Page introuvable - TheWinners{% endblock %}
+
+{% block content %}
+    <div class="main text-center">
+        <h2>🛑 Oups !</h2>
+        <p class="lead text-light">{{ message }}</p>
+        <a href="{{ base_path }}/guides/classes" class="btn btn-warning mt-3">⬅ Retour aux guides</a>
+    </div>
+{% endblock %}

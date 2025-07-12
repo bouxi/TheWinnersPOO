@@ -16,6 +16,7 @@
         "ext-pdo": "*",
         "twig/twig": "^3.21",
         "symfony/asset": "^7.2",
-        "phpmailer/phpmailer": "^6.10"
+        "phpmailer/phpmailer": "^6.10",
+        "vlucas/phpdotenv": "^5.6"
     }
 }

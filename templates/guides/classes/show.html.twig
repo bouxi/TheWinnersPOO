@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ guide.class_name }} - {{ guide.spec_name }} | TheWinners{% endblock %}
+
+{% block content %}
+    <div class="container my-5 guide-detail">
+
+        <h2 class="text-center mb-4">
+            {{ guide.class_name }} - {{ guide.spec_name }}
+        </h2>
+
+        <div class="text-center mb-4">
+            <img src="{{ base_path }}/{{ guide.icon_path }}" alt="{{ guide.spec_name }}" width="64" height="64">
+            <p class="mt-2"><strong>Rôle :</strong> <span class="text-capitalize">{{ guide.role }}</span></p>
+        </div>
+
+        <div class="guide-content bg-dark p-4 rounded shadow-sm">
+            {{ guide.content|raw }}
+        </div>
+
+        {% if guide.talent_tree_image %}
+            <div class="text-center my-5">
+                <h4>🧠 Arbre de talents</h4>
+                <img src="{{ base_path }}/assets/images/talent_trees/{{ guide.talent_tree_image }}"
+                     alt="Arbre de talents"
+                     class="img-fluid rounded shadow">
+            </div>
+        {% endif %}
+
+        <div class="text-center mt-5">
+            <a href="{{ base_path }}/guides/classes" class="btn btn-secondary">⬅ Retour aux guides</a>
+        </div>
+
+    </div>
+{% endblock %}

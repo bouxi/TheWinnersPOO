@@ -1,0 +1,26 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Modifier le guide - {{ guide.class }} / {{ guide.spec }}{% endblock %}
+
+{% block content %}
+    <h1>🛠 Modifier le guide</h1>
+
+    <form method="post" action="{{ base_path }}/admin/guides/update/{{ guide.id }}">
+        <div class="mb-3">
+            <label for="class" class="form-label">Classe</label>
+            <input type="text" name="class" id="class" class="form-control" value="{{ guide.class }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="spec" class="form-label">Spécialisation</label>
+            <input type="text" name="spec" id="spec" class="form-control" value="{{ guide.spec }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="content" class="form-label">Contenu</label>
+            <textarea name="content" id="content" class="form-control" rows="10" required>{{ guide.content }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success">💾 Sauvegarder</button>
+    </form>
+{% endblock %}

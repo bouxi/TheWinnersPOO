@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Guides des Classes - TheWinners{% endblock %}
+
+{% block content %}
+    <div class="main-guide-classes">
+        <h2 class="text-center my-3">Les Guides des Classes</h2>
+
+        <div class="row">
+            {% for class, specs in guides %}
+                <div class="col-md-6 mb-4 text-center">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">{{ class }}</h4>
+                            <div class="row">
+                                {% for spec in specs %}
+                                    <div class="col-md-4 mb-2">
+                                        <div class="d-flex align-items-center">
+                                            <!-- Image représentant le rôle de la spécialisation -->
+                                            <img src="{{ base_path }}/{{ spec.icon_path }}" alt="{{ spec.spec }}" class="role-icon">
+
+                                            <a href="{{ base_path }}/guides/classes/{{ spec.slug }}" class="btn btn-link ms-3">
+                                                {{ spec.spec }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

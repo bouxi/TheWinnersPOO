@@ -33,13 +33,9 @@ class MessageController
         ]);
     }
 
-
-
     public function create(): void
     {
         Security::requireAuth();
-
-
         $users = (new UserRepository())->findAll();
 
         (new View())->render('messages/create.html.twig', [
@@ -52,7 +48,7 @@ class MessageController
         Security::requireAuth();
         $user = Security::getCurrentUser();
 
-        $recipientId = (int)$_POST['recipient_id'] ?? 0;
+        $recipientId = filter_var($_POST['recipient_id'] ?? 0, FILTER_VALIDATE_INT);
         $content = trim($_POST['content'] ?? '');
 
         if ($recipientId && $content) {
@@ -72,22 +68,31 @@ class MessageController
         $repo = new MessageRepository();
         $message = $repo->findById($id);
 
-        if ($message) {
+        if ($message && $message['recipient_id'] == $user->getId()) {
             $repo->markAsRead($id);
             (new View())->render('messages/read.html.twig', [
                 'message' => $message,
                 'user' => $user,
             ]);
         } else {
-            Utils::redirectError('/messages', 'Message introuvable');
+            Utils::redirectError('/messages', 'Message introuvable ou vous n\'avez pas l\'autorisation de le lire');
         }
     }
 
     public function delete(int $id): void
     {
         Security::requireAuth();
-        (new MessageRepository())->delete($id);
-        Utils::redirectSuccess('/messages', 'Message supprimé');
+        $user = Security::getCurrentUser();
+
+        $repo = new MessageRepository();
+        $message = $repo->findById($id);
+
+        if ($message && $message['recipient_id'] == $user->getId()) {
+            $repo->delete($id);
+            Utils::redirectSuccess('/messages', 'Message supprimé');
+        } else {
+            Utils::redirectError('/messages', 'Message introuvable ou vous n\'avez pas l\'autorisation de le supprimer');
+        }
     }
 
     public function reply(int $recipientId): void
@@ -123,16 +128,19 @@ class MessageController
     {
         header('Content-Type: application/json');
 
-        $count = 0;
-        if (\App\Core\Security::isAuthenticated()) {
-            $user = \App\Core\Security::getCurrentUser();
-            $repo = new \App\Repositories\MessageRepository();
-            $count = $repo->findUnreadCountByUserId($user->getId());
+        try {
+            $count = 0;
+            if (Security::isAuthenticated()) {
+                $user = Security::getCurrentUser();
+                $repo = new MessageRepository();
+                $count = $repo->findUnreadCountByUserId($user->getId());
+            }
+
+            echo json_encode(['count' => $count]);
+        } catch (\Exception $e) {
+            echo json_encode(['error' => 'Une erreur est survenue lors du comptage des messages.']);
+            // Log l'erreur si nécessaire
+            error_log($e->getMessage());
         }
-
-        echo json_encode(['count' => $count]);
     }
-
-
-
 }

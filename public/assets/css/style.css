@@ -97,6 +97,10 @@ ul {
     border-radius: 15px;
 }
 
+.main-guide-classes {
+    background-color: rgba(0, 0, 0, 0.45);
+    border-radius: 0 0 15px 15px;
+}
 .formulaire-profile,
 .formulaire-register {
     display: grid;
@@ -246,7 +250,6 @@ ul {
 
 
 
-
 .main-login,
 .main-apply,
 .main-message,
@@ -320,6 +323,8 @@ footer a:hover {
     text-decoration: underline;
 }
 
+
+
 .text-warning {
     color: #ffc107 !important;
 }
@@ -389,4 +394,115 @@ li.valid .rule-icon {
 .pagination .page-item.active .page-link {
     background-color: #007bff;
     border-color: #007bff;
+}
+
+/*
+Guides Classes
+*/
+.role-icon {
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+    margin-right: 10px; /* Un petit espace entre l'icône et le nom de la spécialisation */
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Conteneur général */
+.main-guide-classes {
+    padding: 15px;
+    border-radius: 15px !important;
+    max-width: 1500px; /* ✅ réduis cette valeur si besoin */
+    width: 100%;
+    margin: 40px auto; /* centre horizontalement */
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* Titres de classe */
+.card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffd700; /* or couleur dorée style WoW */
+    border-bottom: 2px solid #ffaa00;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+/* Image du rôle (tank, dps, heal) */
+.role-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    transition: transform 0.3s ease;
+}
+
+/* Lien de la spécialisation */
+.btn-link {
+    color: #00b4ff;
+    font-weight: bold;
+    font-size: 1.05rem;
+    text-decoration: none;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+    padding: 0;
+}
+
+/* Effet de survol */
+.btn-link:hover {
+    color: #ffffff;
+    text-shadow: 0 0 5px #00b4ff, 0 0 10px #00b4ff;
+    cursor: pointer;
+}
+
+/* Image au survol : petit zoom */
+.d-flex:hover .role-icon {
+    transform: scale(1.1);
+}
+
+/* Cartes de classe */
+.card {
+    background-color: rgba(0, 0, 0, 0.75);
+    border: 1px solid #333;
+    box-shadow: 0 0 10px #000;
+    border-radius: 8px;
+}
+
+/* Responsive : centrer sur petit écran */
+@media (max-width: 768px) {
+    .d-flex {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .btn-link {
+        margin-top: 5px;
+    }
+}
+
+/* classes/spécialisation show */
+.guide-detail h2 {
+    font-size: 2rem;
+    color: #ffd700;
+    font-weight: bold;
+}
+
+.guide-content {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    line-height: 1.7;
+    border-left: 4px solid #00b4ff;
+    padding: 20px;
+}
+
+.guide-content h3 {
+    color: #ffaa00;
+    margin-top: 1.5rem;
+}
+
+.guide-content ul {
+    padding-left: 1.5rem;
 }
